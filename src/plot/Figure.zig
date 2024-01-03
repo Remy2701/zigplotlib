@@ -427,7 +427,7 @@ fn draw_y_labels(self: *Figure, svg: *SVG, info: FigureInfo) !void {
     }
 
     // Negative section
-    for (0..(counts.neg + 1)) |i| {
+    for (1..(counts.neg + 1)) |i| {
         const y: f32 = y0 + @as(f32, @floatFromInt(i)) * gap;
 
         const y_value = info.compute_y_inv(y);
@@ -477,7 +477,7 @@ fn draw_x_labels(self: *Figure, svg: *SVG, info: FigureInfo) !void {
     }
 
     // Negative section
-    for (0..(counts.neg + 1)) |i| {
+    for (1..(counts.neg + 1)) |i| {
         const x: f32 = x0 - @as(f32, @floatFromInt(i)) * gap;
 
         const x_value = info.compute_x_inv(x);

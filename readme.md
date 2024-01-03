@@ -241,6 +241,14 @@ The available shapes are:
 | `cross` | A cross |
 | `cross_outline` | The outline of a cross |
 
+### Step
+The first value of the x and y arrays are used as the starting point of the plot, this means that the step will start from this point. The options for styling the step plot are:
+
+| Option | Type | Description |
+| --- | --- | --- |
+| `color` | `RGB (u48)` | The color of the line |
+| `width` | `f32` | The width of the line |
+
 ## Create a new plot type
 In order to create a new type of plot, all that is needed is to create a struct that contains an `interface` function, defined as follows:
 
@@ -268,5 +276,4 @@ You can look at the implementation of the `Line`, `Scatter` or `Area` plots for 
     - Histogram
     - Logarithmic
     - Stem
-    - Step
 - Spline shape for line plot

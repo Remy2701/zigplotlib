@@ -6,6 +6,7 @@ pub const Plot = @import("plot/Plot.zig");
 pub const Line = @import("plot/Line.zig");
 pub const Area = @import("plot/Area.zig");
 pub const Scatter = @import("plot/Scatter.zig");
+pub const Step = @import("plot/Step.zig");
 pub const FigureInfo = @import("plot/FigureInfo.zig");
 
 // Util Module

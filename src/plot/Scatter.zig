@@ -177,7 +177,8 @@ pub fn draw(impl: *const anyopaque, allocator: Allocator, svg: *SVG, info: Figur
 
     if (self.x) |x_| {
         for(x_, self.y) |x, y| {
-            
+            if (!info.x_range.contains(x)) continue;
+            if (!info.y_range.contains(y)) continue;
 
             const x1 = info.compute_x(x);
             const y1 = info.compute_y(y);
@@ -186,6 +187,9 @@ pub fn draw(impl: *const anyopaque, allocator: Allocator, svg: *SVG, info: Figur
         }
     } else {
         for (self.y, 0..) |y, x| {
+            if (!info.x_range.contains(@floatFromInt(x))) continue;
+            if (!info.y_range.contains(y)) continue;
+
             const x1 = info.compute_x(@floatFromInt(x));
             const y1 = info.compute_y(y);
 

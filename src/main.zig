@@ -7,6 +7,8 @@ const Line = @import("plot/Line.zig");
 const Area = @import("plot/Area.zig");
 const Scatter = @import("plot/Scatter.zig");
 
+const Range = @import("util/range.zig").Range;
+
 /// The function for the 1st plot (area - blue)
 fn f(x: f32) f32 {
     if (x > 10.0) {

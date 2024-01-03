@@ -63,6 +63,9 @@ pub fn draw(impl: *const anyopaque, allocator: Allocator, svg: *SVG, info: Figur
         var previous: ?f32 = null;
         var previous_x: ?f32 = null;
         for(x_, self.y) |x, y| {
+            if (!info.x_range.contains(x)) continue;
+            if (!info.y_range.contains(y)) continue;
+
             if (previous == null) {
                 previous = y;
                 previous_x = x;
@@ -92,6 +95,9 @@ pub fn draw(impl: *const anyopaque, allocator: Allocator, svg: *SVG, info: Figur
         var previous: ?f32 = null;
         var previous_x: ?f32 = null;
         for (self.y, 0..) |y, x| {
+            if (!info.x_range.contains(@floatFromInt(x))) continue;
+            if (!info.y_range.contains(y)) continue;
+            
             if (previous == null) {
                 previous = y;
                 previous_x = @floatFromInt(x);

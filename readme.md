@@ -154,6 +154,8 @@ The `axis` option contains more parameters:
 
 | Option | Type | Description |
 | --- | --- | --- |
+| `x_range` | `?Range(f32)` | The range of values for the x axis |
+| `y_range` | `?Range(f32)` | The range of values for the y axis |
 | `color` | `RGB (u48)` | The color of the axis |
 | `width` | `f32` | The width of the axis |
 | `label_color` | `RGB (u48)` | The color of the labels |
@@ -266,4 +268,3 @@ You can look at the implementation of the `Line`, `Scatter` or `Area` plots for 
     - Stem
     - Step
 - Spline shape for line plot
-- Ability to set a range for the x and y axis

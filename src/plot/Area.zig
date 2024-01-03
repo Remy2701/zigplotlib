@@ -63,7 +63,15 @@ pub fn draw(impl: *const anyopaque, allocator: Allocator, svg: *SVG, info: Figur
     if (self.x) |x_| {
         var points = std.ArrayList(f32).init(allocator);
         try points.appendSlice(&[_]f32 {0.0, info.get_base_y()});
+        var last_x: ?f32 = null;
         for (x_, self.y) |x, y| {
+            if (!info.x_range.contains(x)) continue;
+            if (!info.y_range.contains(y)) continue;
+
+            if (last_x) |last_x_| {
+                if (x > last_x_) last_x = x;
+            } else last_x = x;
+
             const x2 = info.compute_x(x);
             const y2 = info.compute_y(y);
 
@@ -71,7 +79,7 @@ pub fn draw(impl: *const anyopaque, allocator: Allocator, svg: *SVG, info: Figur
             try points.append(y2);
         }
 
-        try points.appendSlice(&[_]f32 {info.compute_x(x_[x_.len - 1]), info.get_base_y()});
+        if (last_x) |last_x_| try points.appendSlice(&[_]f32 {info.compute_x(last_x_), info.get_base_y()});
         try svg.addPolyline(.{
             .points = try points.toOwnedSlice(),
             .fill = self.style.color,
@@ -82,7 +90,15 @@ pub fn draw(impl: *const anyopaque, allocator: Allocator, svg: *SVG, info: Figur
     } else {
         var points = std.ArrayList(f32).init(allocator);
         try points.appendSlice(&[_]f32 {0.0, info.get_base_y()});
+        var last_x: ?f32 = null;
         for (self.y, 0..) |y, x| {
+            if (!info.x_range.contains(@floatFromInt(x))) continue;
+            if (!info.y_range.contains(y)) continue;
+
+            if (last_x) |last_x_| {
+                if (@as(f32, @floatFromInt(x)) > last_x_) last_x = @floatFromInt(x);
+            } else last_x = @floatFromInt(x);
+
             const x2 = info.compute_x(@floatFromInt(x));
             const y2 = info.compute_y(y);
 
@@ -90,7 +106,7 @@ pub fn draw(impl: *const anyopaque, allocator: Allocator, svg: *SVG, info: Figur
             try points.append(y2);
         }
 
-        try points.appendSlice(&[_]f32 {info.compute_x(@floatFromInt(self.y.len - 1)), info.get_base_y()});
+        if (last_x) |last_x_| try points.appendSlice(&[_]f32 {info.compute_x(last_x_), info.get_base_y()});
         try svg.addPolyline(.{
             .points = try points.toOwnedSlice(),
             .fill = self.style.color,

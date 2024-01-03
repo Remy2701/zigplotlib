@@ -58,6 +58,10 @@ pub const Style = struct {
     } = .{},
     /// The style of the axis
     axis: struct {
+        /// The range of values on the x_axis
+        x_range: ?Range(f32) = null,
+        /// The range of values on the y_axis
+        y_range: ?Range(f32) = null,
         /// The color of the axis
         color: RGB = rgb.BLACK,
         /// The width of the axis
@@ -273,9 +277,14 @@ fn apply_padding_to_range(range: Range(f32), min: ValuePercent, max: ValuePercen
 
 /// Get the information of the figure
 fn get_info(self: *const Figure) FigureInfo {
-    const x_range = apply_padding_to_range(self.get_range_x(), self.style.value_padding.x_min, self.style.value_padding.x_max);
-    const y_range = apply_padding_to_range(self.get_range_y(), self.style.value_padding.y_min, self.style.value_padding.y_max);
-    // var y_range = self.get_range_y();
+    const x_range = 
+        if (self.style.axis.x_range) |x_range| x_range 
+        else apply_padding_to_range(self.get_range_x(), self.style.value_padding.x_min, self.style.value_padding.x_max);
+    
+    const y_range = 
+        if (self.style.axis.y_range) |y_range| y_range
+        else apply_padding_to_range(self.get_range_y(), self.style.value_padding.y_min, self.style.value_padding.y_max);
+
     const width = self.compute_plot_width(x_range);
     const height = self.compute_plot_height(y_range);
 

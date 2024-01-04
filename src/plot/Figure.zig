@@ -302,6 +302,8 @@ fn get_info(self: *const Figure) FigureInfo {
 
 /// Draw the x axis of the figure
 fn draw_x_axis(self: *Figure, svg: *SVG, info: FigureInfo) !void {
+    if (!info.y_range.contains(0.0)) return;
+
     const y0 = info.compute_y(0.0);
     try svg.addLine(.{
         .x1 = .{ .pixel = 0.0 },
@@ -351,6 +353,8 @@ fn draw_y_grid(self: *Figure, svg: *SVG, info: FigureInfo) !void {
 
 /// Draw the y axis of the figure
 fn draw_y_axis(self: *Figure, svg: *SVG, info: FigureInfo) !void {
+    if (!info.x_range.contains(0.0)) return;
+
     const x0 = info.compute_x(0.0);
     try svg.addLine(.{
         .x1 = .{ .pixel = x0 },

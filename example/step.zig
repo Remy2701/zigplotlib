@@ -43,6 +43,15 @@ pub fn main() !void {
             .shape = .circle,
         }
     });
+    try figure.addPlot(Line {
+        .x = &x,
+        .y = &y,
+        .style = .{
+            .color = rgb.GRAY,
+            .width = 2.0,
+            .dash = 4.0,
+        }
+    });
     try figure.addPlot(Step {
         .x = &x,
         .y = &y,

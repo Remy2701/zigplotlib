@@ -18,6 +18,8 @@ pub const Style = struct {
     color: RGB = 0x0000FF,
     /// The width of the line
     width: f32 = 2.0,
+    /// The size of the dashes of the line (null = no dashes)
+    dash: ?f32 = null,
 };
 
 /// The x-axis values of the line plot
@@ -57,7 +59,8 @@ pub fn get_y_range(impl: *const anyopaque) Range(f32) {
 /// Draws the line plot (converts to SVG)
 pub fn draw(impl: *const anyopaque, allocator: Allocator, svg: *SVG, info: FigureInfo) !void {
     const self: *const Line = @ptrCast(@alignCast(impl));
-    _ = allocator;
+
+    const stroke_dash_array: ?[]const f32 = if (self.style.dash) |dash| try allocator.dupe(f32, &[_]f32 { dash }) else null;
 
     if (self.x) |x_| {
         var previous: ?f32 = null;
@@ -85,6 +88,7 @@ pub fn draw(impl: *const anyopaque, allocator: Allocator, svg: *SVG, info: Figur
                     .y2 = . { .pixel = y2 },
                     .stroke = self.style.color,
                     .stroke_width = . { .pixel = self.style.width },
+                    .stroke_dasharray = stroke_dash_array,
                 },
             );
 
@@ -117,6 +121,7 @@ pub fn draw(impl: *const anyopaque, allocator: Allocator, svg: *SVG, info: Figur
                     .y2 = . { .pixel = y2 },
                     .stroke = self.style.color,
                     .stroke_width = . { .pixel = self.style.width },
+                    .stroke_dasharray = stroke_dash_array,
                 },
             );
 

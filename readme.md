@@ -207,6 +207,7 @@ The options for styling the line plot are:
 | --- | --- | --- |
 | `color` | `RGB (u48)` | The color of the line |
 | `width` | `f32` | The width of the line |
+| `dash` | `?f32` | The length of the dash for the line (null means no dash)  |
 
 ### Area
 The options for styling the area plot are:

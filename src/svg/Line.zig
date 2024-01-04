@@ -47,6 +47,8 @@ pub const Options = struct {
     stroke_width: LengthPercent = .{ .pixel = 1.0 },
     /// The line cap of the stroke
     stroke_linecap: LineCap = .butt,
+    /// The dash array of the stroke
+    stroke_dasharray: ?[]const f32 = null,
     /// The opacity of the line
     opacity: f32 = 1.0,
 };
@@ -73,6 +75,13 @@ pub fn write_to(self: *const Line, writer: anytype) anyerror!void {
     try writer.print("stroke-opacity=\"{d}\" ", .{self.options.stroke_opacity});
     try writer.print("stroke-width=\"{}\" ", .{self.options.stroke_width});
     try writer.print("stroke-linecap=\"{}\" ", .{self.options.stroke_linecap});
+    if (self.options.stroke_dasharray) |stroke_dash_array| {
+        try writer.writeAll("stroke-dasharray=\" ");
+        for (stroke_dash_array) |dash| {
+            try writer.print("{} ", .{dash});
+        }
+        try writer.writeAll("\" ");
+    }
     try writer.print("opacity=\"{d}\" ", .{self.options.opacity});
     try writer.writeAll("/>");
 }

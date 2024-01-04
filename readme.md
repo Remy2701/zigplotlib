@@ -245,12 +245,28 @@ The available shapes are:
 | `cross_outline` | The outline of a cross |
 
 ### Step
+
+![Step Plot](example/out/step.svg)
+
 The first value of the x and y arrays are used as the starting point of the plot, this means that the step will start from this point. The options for styling the step plot are:
 
 | Option | Type | Description |
 | --- | --- | --- |
 | `color` | `RGB (u48)` | The color of the line |
 | `width` | `f32` | The width of the line |
+
+### Stem
+
+![Stem Plot](example/out/stem.svg)
+
+The options for styling the stem plot are:
+
+| Option | Type | Description |
+| --- | --- | --- |
+| `color` | `RGB (u48)` | The color of the stem |
+| `width` | `f32` | The width of the stem |
+| `shape` | `Shape` | The shape of the points (at the end of the stem) |
+| `radius` | `f32` | The radius of the points (at the end of the stem) |
 
 ## Create a new plot type
 In order to create a new type of plot, all that is needed is to create a struct that contains an `interface` function, defined as follows:

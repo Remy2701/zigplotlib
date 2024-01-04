@@ -103,6 +103,28 @@ pub const Style = struct {
         /// The width of the frame
         frame_width: f32 = 4.0,
     } = .{},
+    /// The style the legend
+    legend: struct {
+        /// Whether to show the legend
+        show: bool = true,
+        /// The position of the legend
+        position: union(enum) {
+            top_left,
+            top_right,
+            bottom_left,
+            bottom_right,
+        } = .bottom_right,
+        /// The font size to use for the lengend
+        font_size: f32 = 10.0,
+        /// The color of the background
+        background_color: RGB = rgb.WHITE,
+        /// The color of the border
+        border_color: RGB = rgb.BLACK,
+        /// The width of the border
+        border_width: f32 = 2.0,
+        /// The padding with the plot
+        padding: f32 = 10.0,
+    } = .{},
 };
 
 /// The allocator used for the figure
@@ -515,6 +537,66 @@ fn draw_x_labels(self: *Figure, svg: *SVG, info: FigureInfo) !void {
     }
 }
 
+fn draw_legend(self: *Figure, svg: *SVG, info: FigureInfo) !void {
+    var plot_count: usize = 0;
+    var longuest_title: usize = 0;
+    for (self.plots.items) |plot| {
+        if (plot.title) |title| {
+            longuest_title = @max(longuest_title, title.len);
+            plot_count += 1;
+        }
+    }
+
+    if (plot_count == 0) return;
+
+
+    // FIXME: Not ideal
+    const width = @as(f32, @floatFromInt(longuest_title)) * self.style.legend.font_size / 1.5 + 2 * self.style.legend.font_size;
+    const height = @as(f32, @floatFromInt(plot_count)) * (self.style.legend.font_size * 1.5 + 2.0) + self.style.legend.font_size / 2.0;
+    
+    const x, const y = switch (self.style.legend.position) {
+        .top_left => .{ self.style.legend.padding, self.style.legend.padding },
+        .top_right => .{ info.width - self.style.legend.padding - width, self.style.legend.padding },
+        .bottom_left => .{ self.style.legend.padding, info.height - self.style.legend.padding - height },
+        .bottom_right => .{ info.width - self.style.legend.padding - width, info.height - self.style.legend.padding - height },
+    };
+
+    try svg.addRect(.{
+        .x = .{ .pixel = x },
+        .y = .{ .pixel = y },
+        .width = .{ .pixel = width },
+        .height = .{ .pixel = height },
+        .fill = self.style.legend.background_color,
+        .stroke = self.style.legend.border_color,
+        .stroke_width = .{ .pixel = self.style.legend.border_width },
+    });
+
+    var i: usize = 0;
+    for (self.plots.items) |plot| {
+        if (plot.title) |title| {
+            try svg.addRect(.{
+                .x = .{ .pixel = x + self.style.legend.font_size / 2 },
+                .y = .{ .pixel = y + (self.style.legend.font_size * 1.5 + 2) * @as(f32, @floatFromInt(i)) + self.style.legend.font_size / 2 },
+                .width = .{ .pixel = self.style.legend.font_size },
+                .height = .{ .pixel = self.style.legend.font_size },
+                .fill = plot.color,
+            });
+            try svg.addText(.{
+                .x = .{ .pixel = x + 2 * self.style.legend.font_size },
+                .y = .{ .pixel = y + self.style.legend.font_size + (self.style.legend.font_size * 1.5 + 2) * @as(f32, @floatFromInt(i)) },
+                .text_anchor = .start,
+                .dominant_baseline = .middle,
+                .font_family = self.style.axis.label_font,
+                .font_size = .{ .pixel = self.style.legend.font_size },
+                .fill = self.style.axis.label_color,
+                .text = title,
+            });
+            i += 1;
+            if (i == plot_count) break;
+        }
+    }
+} 
+
 /// Draw the figure on an SVG File.
 pub fn show(self: *Figure) !SVG {
     if (self.plots.items.len == 0) return error.NoPlots;
@@ -561,6 +643,9 @@ pub fn show(self: *Figure) !SVG {
     // Labels
     try self.draw_x_labels(&svg, info);
     try self.draw_y_labels(&svg, info);
+
+    // Legend
+    if (self.style.legend.show) try self.draw_legend(&svg, info);
 
     return svg;
 }

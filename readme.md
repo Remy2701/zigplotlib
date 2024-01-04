@@ -136,6 +136,7 @@ The figure takes two arguments, the allocator (used to store the plot and genera
 | `background_opacity` | `f32` | The opacity of the background |
 | `value_padding` | `...` | The padding to use for the range of the plot |
 | `axis` | `...` | The style for the axis |
+| `legend` | `...` | The style for the legend |
 
 The `value_padding` option is defined like so:
 ```zig
@@ -183,6 +184,18 @@ tick_count_x: union(enum) {
 }
 ```
 
+The `legend` option contains more parameters:
+
+| Option | Type | Description |
+| --- | --- | --- |
+| `show` | `bool` | Whether to show the legend |
+| `position` | `enum { top_left, top_right, bottom_left, bottom_right }` | The position of the legend |
+| `font_size` | `f32` | The font size of the legend |
+| `background_color` | `RGB (u48)` | The background color of the legend |
+| `border_color` | `RGB (u48)` | The border color of the legend |
+| `border_width` | `f32` | The border width of the legend |
+| `padding` | `f32` | The padding around the legend |
+
 Then you can add a plot like so (here is the example with the line plot):
 
 ```zig
@@ -205,6 +218,7 @@ The options for styling the line plot are:
 
 | Option | Type | Description |
 | --- | --- | --- |
+| `title` | `?[]const u8` | The title of the plot (used for the legend) |
 | `color` | `RGB (u48)` | The color of the line |
 | `width` | `f32` | The width of the line |
 | `dash` | `?f32` | The length of the dash for the line (null means no dash)  |
@@ -214,6 +228,7 @@ The options for styling the area plot are:
 
 | Option | Type | Description |
 | --- | --- | --- |
+| `title` | `?[]const u8` | The title of the plot (used for the legend) |
 | `color` | `RGB (u48)` | The color of the area |
 | `opacity` | `f32` | The opacity of the area |
 | `width` | `f32` | The width of the line (above the area) |
@@ -226,6 +241,7 @@ The options for styling the scatter plot are:
 
 | Option | Type | Description |
 | --- | --- | --- |
+| `title` | `?[]const u8` | The title of the plot (used for the legend) |
 | `color` | `RGB (u48)` | The color of the points |
 | `radius` | `f32` | The radius of the points |
 | `shape` | `...` | The shape of the points |
@@ -255,6 +271,7 @@ The first value of the x and y arrays are used as the starting point of the plot
 
 | Option | Type | Description |
 | --- | --- | --- |
+| `title` | `?[]const u8` | The title of the plot (used for the legend) |
 | `color` | `RGB (u48)` | The color of the line |
 | `width` | `f32` | The width of the line |
 
@@ -266,6 +283,7 @@ The options for styling the stem plot are:
 
 | Option | Type | Description |
 | --- | --- | --- |
+| `title` | `?[]const u8` | The title of the plot (used for the legend) |
 | `color` | `RGB (u48)` | The color of the stem |
 | `width` | `f32` | The width of the stem |
 | `shape` | `Shape` | The shape of the points (at the end of the stem) |
@@ -282,17 +300,18 @@ pub fn interface(self: *const Self) Plot {
 
 The `Plot` object, contains the following fields:
 - a pointer to the data (`*const anyopaque`)
+- the title of the plot (`?[]const u8`) (used for the legend)
+- the color of the plot (`RGB (u48)`) (used for the legend)
 - a pointer to the get_range_x function `*const fn(*const anyopaque) Range(f32)`
 - a pointer to the get_range_y function `*const fn(*const anyopaque) Range(f32)`
 - a pointer to the draw function `*const fn(*const anyopaque, Allocator, *SVG, FigureInfo) anyerror!void`
 
-You can look at the implementation of the `Line`, `Scatter` or `Area` plots for examples.
+You can look at the implementation of the `Line`, `Scatter`, `Area`, `Step` or `Stem` plots for examples.
 
 ## Roadmap
 - Ability to set the title of a plot
 - Ability to set the title of the axis
 - Ability to add arrows at the end of axis
-- Ability to add a legend
 - More plot types
     - Bar
     - Histogram

@@ -14,6 +14,8 @@ const Area = @This();
 
 /// The Style of the Area plot
 pub const Style = struct {
+    /// The title of the plot
+    title: ?[]const u8 = null,
     /// The color of the area
     color: RGB = 0x0000FF,
     /// The opacity of the area
@@ -121,6 +123,8 @@ pub fn draw(impl: *const anyopaque, allocator: Allocator, svg: *SVG, info: Figur
 pub fn interface(self: *const Area) Plot {
     return Plot.init(
         @as(*const anyopaque, self),
+        self.style.title,
+        self.style.color,
         &get_x_range,
         &get_y_range,
         &draw

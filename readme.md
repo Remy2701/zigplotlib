@@ -219,6 +219,9 @@ The options for styling the area plot are:
 | `width` | `f32` | The width of the line (above the area) |
 
 ### Scatter
+
+![Scatter Plot](example/out/scatter.svg)
+
 The options for styling the scatter plot are:
 
 | Option | Type | Description |

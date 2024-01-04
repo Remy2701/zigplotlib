@@ -88,6 +88,10 @@ pub const Style = struct {
             /// The gap between the ticks
             gap: f32,
         } = .{ .count = 5.0 },
+        /// Whether to show the x-axis
+        show_x_axis: bool = true,
+        /// Whether to show the y-axis
+        show_y_axis: bool = true,
         /// Whether to show the grid on the x-axis
         show_grid_x: bool = true,
         /// Whether to show the grid on the y-axis
@@ -542,10 +546,10 @@ pub fn show(self: *Figure) !SVG {
     }
 
     // y-axis
-    try self.draw_y_axis(&svg, info);
+    if (self.style.axis.show_y_axis) try self.draw_y_axis(&svg, info);
 
     // x-axis
-    try self.draw_x_axis(&svg, info);
+    if (self.style.axis.show_x_axis) try self.draw_x_axis(&svg, info);
 
     // Border
     try self.draw_border(&svg, info);

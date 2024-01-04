@@ -61,7 +61,6 @@
 <line x1="409.60003662109375" y1="324.437744140625" x2="443.7333679199219" y2="324.437744140625" stroke="#0000FF" stroke-opacity="1" stroke-width="2" stroke-linecap="butt" opacity="1" />
 <line x1="443.7333679199219" y1="324.437744140625" x2="443.7333679199219" y2="207.89047241210938" stroke="#0000FF" stroke-opacity="1" stroke-width="2" stroke-linecap="butt" opacity="1" />
 <line x1="443.7333679199219" y1="207.89047241210938" x2="477.86669921875" y2="207.89047241210938" stroke="#0000FF" stroke-opacity="1" stroke-width="2" stroke-linecap="butt" opacity="1" />
-<line x1="34.13333511352539" y1="0" x2="34.13333511352539" y2="512" stroke="#000000" stroke-opacity="1" stroke-width="2" stroke-linecap="butt" opacity="1" />
 <line x1="0" y1="258.58782958984375" x2="512" y2="258.58782958984375" stroke="#000000" stroke-opacity="1" stroke-width="2" stroke-linecap="butt" opacity="1" />
 <rect x="0" y="0" width="512" height="512" rx="auto" ry="auto" fill="none" fill-opacity="1.0e+00" stroke="#000000" stroke-opacity="1.0e+00" stroke-width="4" opacity="1.0e+00" />
 <text x="34.13333511352539" y="522" dx="0" dy="0" textLength="none" fill="#000000" fill-opacity="1" stroke="none" stroke-opacity="1" stroke-width="1" opacity="1" font-family="sans-serif" font-size="10px" font-weight="normal" text-anchor="middle" dominant-baseline="hanging" >0.00</text>

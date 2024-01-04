@@ -167,6 +167,8 @@ The `axis` option contains more parameters:
 | `label_font` | `[]const u8` | The font to use for the labels |
 | `tick_count_x` | `...` | The number of ticks to use on the x axis |
 | `tick_count_y` | `...` | The number of ticks to use on the y axis |
+| `show_x_axis` | `bool` | whether to show the x axis |
+| `show_y_axis` | `bool` | whether to show the y axis |
 | `show_grid_x` | `bool` | whether to show the grid on the x axis |
 | `show_grid_y` | `bool` | whether to show the grid on the y axis |
 | `grid_opacity` | `f32` | The opacity of the grid |

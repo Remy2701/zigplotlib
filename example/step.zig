@@ -27,6 +27,9 @@ pub fn main() !void {
         .value_padding = .{
             .x_min = .{ .value = 1.0 },
             .x_max = .{ .value = 1.0 },
+        },
+        .axis = .{
+            .show_y_axis = false,
         }
     });
     defer figure.deinit();

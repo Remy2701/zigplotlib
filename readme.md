@@ -294,5 +294,4 @@ You can look at the implementation of the `Line`, `Scatter` or `Area` plots for 
     - Bar
     - Histogram
     - Logarithmic
-    - Stem
 - Spline shape for line plot

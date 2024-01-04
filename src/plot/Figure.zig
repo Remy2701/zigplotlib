@@ -335,7 +335,7 @@ fn draw_y_grid(self: *Figure, svg: *SVG, info: FigureInfo) !void {
     }
 
     // Negative section
-    for (0..(counts.neg + 1)) |i| {
+    for (1..(counts.neg + 1)) |i| {
         const y: f32 = y0 + @as(f32, @floatFromInt(i)) * gap;
         try svg.addLine(.{
             .x1 = .{ .pixel = 0.0 },
@@ -384,7 +384,7 @@ fn draw_x_grid(self: *Figure, svg: *SVG, info: FigureInfo) !void {
     }
 
     // Negative section
-    for (0..(counts.neg + 1)) |i| {
+    for (1..(counts.neg + 1)) |i| {
         const x: f32 = x0 - @as(f32, @floatFromInt(i)) * gap;
         try svg.addLine(.{
             .x1 = .{ .pixel = x },

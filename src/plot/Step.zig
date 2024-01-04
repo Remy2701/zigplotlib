@@ -1,4 +1,4 @@
-//! The Line plot
+//! The Step plot
 
 const std = @import("std");
 const Allocator = std.mem.Allocator;
@@ -12,7 +12,7 @@ const FigureInfo = @import("FigureInfo.zig");
 
 const Step = @This();
 
-/// The style of the line plot
+/// The style of the step plot
 pub const Style = struct {
     /// The color of the line
     color: RGB = 0x0000FF,
@@ -20,14 +20,14 @@ pub const Style = struct {
     width: f32 = 2.0,
 };
 
-/// The x-axis values of the line plot
+/// The x-axis values of the step plot
 x: ?[]const f32 = null,
-/// The y-axis values of the line plot
+/// The y-axis values of the step plot
 y: []const f32,
-/// The style of the line plot
+/// The style of the step plot
 style: Style = .{},
 
-/// Returns the range of the x values of the line plot
+/// Returns the range of the x values of the step plot
 pub fn get_x_range(impl: *const anyopaque) Range(f32) {
     const self: *const Step = @ptrCast(@alignCast(impl));
     if (self.x) |x| {
@@ -44,7 +44,7 @@ pub fn get_x_range(impl: *const anyopaque) Range(f32) {
     }
 }
 
-/// Returns the range of the y values of the line plot
+/// Returns the range of the y values of the step plot
 pub fn get_y_range(impl: *const anyopaque) Range(f32) {
     const self: *const Step = @ptrCast(@alignCast(impl));
     const min_max = std.mem.minMax(f32, self.y);
@@ -54,7 +54,7 @@ pub fn get_y_range(impl: *const anyopaque) Range(f32) {
     };
 }
 
-/// Draws the line plot (converts to SVG)
+/// Draws the step plot (converts to SVG)
 pub fn draw(impl: *const anyopaque, allocator: Allocator, svg: *SVG, info: FigureInfo) !void {
     const self: *const Step = @ptrCast(@alignCast(impl));
     _ = allocator;
@@ -154,7 +154,7 @@ pub fn draw(impl: *const anyopaque, allocator: Allocator, svg: *SVG, info: Figur
     }
 }
 
-/// Convert the Line Plot to a Plot (its interface)
+/// Convert the Step Plot to a Plot (its interface)
 pub fn interface(self: *const Step) Plot {
     return Plot.init(
         @as(*const anyopaque, self),

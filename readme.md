@@ -5,6 +5,48 @@ The Zig Plot Lib is a library for plotting data in Zig. It is designed to be eas
 
 I'm developping this library with version 0.12.0-dev.1768+39a966b0a.
 
+## Installation
+You can install the library by adding it to the `build.zig.zon` file, either manually like so:
+```zig
+.{
+    ...
+    .dependencies = .{
+        .zigplotlib = .{
+            .url = "https://github.com/Remy2701/zigplotlib/archive/main.tar.gz",
+            .hash = "...",
+        }
+    }
+    ...
+}
+```
+
+The hash can be found using the builtin command:
+```sh
+zig fetch https://github.com/Remy2701/zigplotlib/archive/main.tar.gz
+```
+
+Or you can also add it automatically like so:
+```sh
+zig fetch --save https://github.com/Remy2701/zigplotlib/archive/main.tar.gz
+```
+
+Then in the `build.zig`, you can add the following:
+```zig
+const zigplotlib = b.dependency("zigplotlib", .{
+    .target = target,
+    .optimize = optimize,
+});
+
+exe.addModule("plotlib", zigplotlib.module("zigplotlib"));
+```
+
+The name of the module (`plotlib`) can be changed to whatever you want.
+
+Finally in your code you can import the module using the following:
+```zig
+const plotlib = @import("plotlib");
+```
+
 ## Example
 
 ![Example Plot](out.svg)

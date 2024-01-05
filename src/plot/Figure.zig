@@ -160,7 +160,7 @@ pub fn addPlot(self: *Figure, plot: anytype) !void {
     if (@TypeOf(plot) == Plot) {
         try self.plots.append(plot);
     } else {
-        intf.ensure_implement(struct {
+        intf.ensureImplement(struct {
             interface: fn(*const anyopaque) Plot
         }, @TypeOf(plot));
 
@@ -171,11 +171,11 @@ pub fn addPlot(self: *Figure, plot: anytype) !void {
 }
 
 /// Get the x-range of the plot
-fn get_range_x(self: *const Figure) Range(f32) {
+fn getRangeX(self: *const Figure) Range(f32) {
     // Initialize the range to ]∞;-∞[
     var range_x = Range(f32).init(std.math.inf(f32), -std.math.inf(f32));
     for (self.plots.items) |plot| {
-        const plot_range_x = plot.get_range_x();
+        const plot_range_x = plot.getRangeX();
         
         range_x.min = @min(range_x.min, plot_range_x.min);
         range_x.max = @max(range_x.max, plot_range_x.max);
@@ -185,11 +185,11 @@ fn get_range_x(self: *const Figure) Range(f32) {
 }
 
 /// Get the y-range of the plot
-fn get_range_y(self: *const Figure) Range(f32) {
+fn getRangeY(self: *const Figure) Range(f32) {
     // Initialize the range to ]∞;-∞[
     var range_y = Range(f32).init(std.math.inf(f32), -std.math.inf(f32));
     for (self.plots.items) |plot| {
-        const plot_range_y = plot.get_range_y();
+        const plot_range_y = plot.getRangeY();
         
         range_y.min = @min(range_y.min, plot_range_y.min);
         range_y.max = @max(range_y.max, plot_range_y.max);
@@ -199,7 +199,7 @@ fn get_range_y(self: *const Figure) Range(f32) {
 }
 
 /// Compute the width of the plot (excluding the axis and labels)
-fn compute_plot_width(self: *const Figure, x_range: Range(f32)) f32 {
+fn computePlotWidth(self: *const Figure, x_range: Range(f32)) f32 {
     switch (self.style.width) {
         .pixel => |pixel| return pixel,
         .auto_gap => |gap| return gap * (x_range.max - x_range.min),
@@ -207,7 +207,7 @@ fn compute_plot_width(self: *const Figure, x_range: Range(f32)) f32 {
 }
 
 /// Compute the height of the plot (excluding the axis and labels)
-fn compute_plot_height(self: *const Figure, y_range: Range(f32)) f32 {
+fn computePlotHeight(self: *const Figure, y_range: Range(f32)) f32 {
     switch (self.style.height) {
         .pixel => |pixel| return pixel,
         .auto_gap => |gap| return gap * (y_range.max - y_range.min),
@@ -215,8 +215,8 @@ fn compute_plot_height(self: *const Figure, y_range: Range(f32)) f32 {
 }
 
 /// Get the height of the positive and negative section
-fn get_section_height(info: FigureInfo) struct { pos: f32, neg: f32 } {
-    const y0 = info.get_base_y();
+fn getSectionHeight(info: FigureInfo) struct { pos: f32, neg: f32 } {
+    const y0 = info.getBaseY();
     return .{
         .pos = y0,
         .neg = info.height - y0,
@@ -224,8 +224,8 @@ fn get_section_height(info: FigureInfo) struct { pos: f32, neg: f32 } {
 }
 
 /// Get the width of the positive and negative section
-fn get_section_width(info: FigureInfo) struct { pos: f32, neg: f32 } {
-    const x0 = info.compute_x(0.0);
+fn getSectionWidth(info: FigureInfo) struct { pos: f32, neg: f32 } {
+    const x0 = info.computeX(0.0);
     return .{
         .pos = info.width - x0,
         .neg = x0,
@@ -233,10 +233,10 @@ fn get_section_width(info: FigureInfo) struct { pos: f32, neg: f32 } {
 }
 
 /// Compute the gap between the ticks on the x-axis
-fn compute_x_tick_gap(self: *const Figure, info: FigureInfo) f32 {
+fn computeXTickGap(self: *const Figure, info: FigureInfo) f32 {
     return switch(self.style.axis.tick_count_x) {
         .count => |count| blk: {
-            const sections = get_section_height(info);
+            const sections = getSectionHeight(info);
             break :blk @max(sections.pos, sections.neg) / @as(f32, @floatFromInt(count + 1));
         },
         .gap => |gap| gap
@@ -244,10 +244,10 @@ fn compute_x_tick_gap(self: *const Figure, info: FigureInfo) f32 {
 }
 
 /// Compute the gap between the ticks on the y-axis
-fn compute_y_tick_gap(self: *const Figure, info: FigureInfo) f32 {
+fn computeYTickGap(self: *const Figure, info: FigureInfo) f32 {
     return switch(self.style.axis.tick_count_y) {
         .count => |count| blk: {
-            const sections = get_section_width(info);
+            const sections = getSectionWidth(info);
             break :blk @max(sections.pos, sections.neg) / @as(f32, @floatFromInt(count + 1));
         },
         .gap => |gap| gap
@@ -255,17 +255,17 @@ fn compute_y_tick_gap(self: *const Figure, info: FigureInfo) f32 {
 }
 
 /// Compute the number of ticks on the x-axis
-fn compute_x_tick_count(self: *const Figure, info: FigureInfo, gap: f32) struct { pos: usize, neg: usize } {
+fn computeXTickCount(self: *const Figure, info: FigureInfo, gap: f32) struct { pos: usize, neg: usize } {
     return switch(self.style.axis.tick_count_x) {
         .count => |count| blk: {
-            const sections = get_section_height(info);
+            const sections = getSectionHeight(info);
             break :blk .{
                 .pos = if (sections.pos > sections.neg) count else @intFromFloat(sections.pos / gap),
                 .neg = if (sections.neg > sections.pos) count else @intFromFloat(sections.neg / gap),
             };
         },
         .gap => blk: {
-            const sections = get_section_height(info);
+            const sections = getSectionHeight(info);
             break :blk .{
                 .pos = @intFromFloat(sections.pos / gap),
                 .neg = @intFromFloat(sections.neg / gap),
@@ -275,17 +275,17 @@ fn compute_x_tick_count(self: *const Figure, info: FigureInfo, gap: f32) struct 
 }
 
 /// Compute the number of ticks on the y-axis
-fn compute_y_tick_count(self: *const Figure, info: FigureInfo, gap: f32) struct { pos: usize, neg: usize } {
+fn computeYTickCount(self: *const Figure, info: FigureInfo, gap: f32) struct { pos: usize, neg: usize } {
     return switch(self.style.axis.tick_count_x) {
         .count => |count| blk: {
-            const sections = get_section_width(info);
+            const sections = getSectionWidth(info);
             break :blk .{
                 .pos = if (sections.pos > sections.neg) count else @intFromFloat(sections.pos / gap),
                 .neg = if (sections.neg > sections.pos) count else @intFromFloat(sections.neg / gap),
             };
         },
         .gap => blk: {
-            const sections = get_section_width(info);
+            const sections = getSectionWidth(info);
             break :blk .{
                 .pos = @intFromFloat(sections.pos / gap),
                 .neg = @intFromFloat(sections.neg / gap),
@@ -294,7 +294,7 @@ fn compute_y_tick_count(self: *const Figure, info: FigureInfo, gap: f32) struct 
     };
 }
 
-fn apply_padding_to_range(range: Range(f32), min: ValuePercent, max: ValuePercent) Range(f32) {
+fn applyPaddingToRange(range: Range(f32), min: ValuePercent, max: ValuePercent) Range(f32) {
     return Range(f32).init(
         switch (min) {
             .value => |value| range.min - value,
@@ -308,17 +308,17 @@ fn apply_padding_to_range(range: Range(f32), min: ValuePercent, max: ValuePercen
 }
 
 /// Get the information of the figure
-fn get_info(self: *const Figure) FigureInfo {
+fn getInfo(self: *const Figure) FigureInfo {
     const x_range = 
         if (self.style.axis.x_range) |x_range| x_range 
-        else apply_padding_to_range(self.get_range_x(), self.style.value_padding.x_min, self.style.value_padding.x_max);
+        else applyPaddingToRange(self.getRangeX(), self.style.value_padding.x_min, self.style.value_padding.x_max);
     
     const y_range = 
         if (self.style.axis.y_range) |y_range| y_range
-        else apply_padding_to_range(self.get_range_y(), self.style.value_padding.y_min, self.style.value_padding.y_max);
+        else applyPaddingToRange(self.getRangeY(), self.style.value_padding.y_min, self.style.value_padding.y_max);
 
-    const width = self.compute_plot_width(x_range);
-    const height = self.compute_plot_height(y_range);
+    const width = self.computePlotWidth(x_range);
+    const height = self.computePlotHeight(y_range);
 
     return FigureInfo {
         .x_range = x_range,
@@ -329,10 +329,10 @@ fn get_info(self: *const Figure) FigureInfo {
 }
 
 /// Draw the x axis of the figure
-fn draw_x_axis(self: *Figure, svg: *SVG, info: FigureInfo) !void {
+fn drawXAxis(self: *Figure, svg: *SVG, info: FigureInfo) !void {
     if (!info.y_range.contains(0.0)) return;
 
-    const y0 = info.compute_y(0.0);
+    const y0 = info.computeY(0.0);
     try svg.addLine(.{
         .x1 = .{ .pixel = 0.0 },
         .y1 = .{ .pixel = y0 },
@@ -344,11 +344,11 @@ fn draw_x_axis(self: *Figure, svg: *SVG, info: FigureInfo) !void {
 }
 
 /// Draw the grid on the y axis of the figure
-fn draw_y_grid(self: *Figure, svg: *SVG, info: FigureInfo) !void {
-    const gap = self.compute_x_tick_gap(info);
-    const counts = self.compute_x_tick_count(info, gap);
+fn drawYGrid(self: *Figure, svg: *SVG, info: FigureInfo) !void {
+    const gap = self.computeXTickGap(info);
+    const counts = self.computeXTickCount(info, gap);
 
-    const y0 = info.get_base_y();
+    const y0 = info.getBaseY();
 
     // Positive section
     for (0..(counts.pos + 1)) |i| {
@@ -380,10 +380,10 @@ fn draw_y_grid(self: *Figure, svg: *SVG, info: FigureInfo) !void {
 }
 
 /// Draw the y axis of the figure
-fn draw_y_axis(self: *Figure, svg: *SVG, info: FigureInfo) !void {
+fn drawYAxis(self: *Figure, svg: *SVG, info: FigureInfo) !void {
     if (!info.x_range.contains(0.0)) return;
 
-    const x0 = info.compute_x(0.0);
+    const x0 = info.computeX(0.0);
     try svg.addLine(.{
         .x1 = .{ .pixel = x0 },
         .y1 = .{ .pixel = 0.0 },
@@ -395,11 +395,11 @@ fn draw_y_axis(self: *Figure, svg: *SVG, info: FigureInfo) !void {
 }
 
 /// Draw the grid on the x axis of the figure
-fn draw_x_grid(self: *Figure, svg: *SVG, info: FigureInfo) !void {
-    const gap = self.compute_y_tick_gap(info);
-    const counts = self.compute_y_tick_count(info, gap);
+fn drawXGrid(self: *Figure, svg: *SVG, info: FigureInfo) !void {
+    const gap = self.computeYTickGap(info);
+    const counts = self.computeYTickCount(info, gap);
 
-    const x0 = info.compute_x(0.0);
+    const x0 = info.computeX(0.0);
 
     // Positive section
     for (0..(counts.pos + 1)) |i| {
@@ -431,7 +431,7 @@ fn draw_x_grid(self: *Figure, svg: *SVG, info: FigureInfo) !void {
 }
 
 /// Draw the border of the figure (frame)
-fn draw_border(self: *Figure, svg: *SVG, info: FigureInfo) !void {
+fn drawBorder(self: *Figure, svg: *SVG, info: FigureInfo) !void {
     try svg.addRect(.{
         .x = .{ .pixel = 0.0 },
         .y = .{ .pixel = 0.0 },
@@ -444,17 +444,17 @@ fn draw_border(self: *Figure, svg: *SVG, info: FigureInfo) !void {
 }
 
 /// Draw the labels on the y axis of the figure
-fn draw_y_labels(self: *Figure, svg: *SVG, info: FigureInfo) !void {
-    const gap = self.compute_x_tick_gap(info);
-    const counts = self.compute_x_tick_count(info, gap);
+fn drawYLabels(self: *Figure, svg: *SVG, info: FigureInfo) !void {
+    const gap = self.computeXTickGap(info);
+    const counts = self.computeXTickCount(info, gap);
 
-    const y0 = info.get_base_y();
+    const y0 = info.getBaseY();
 
     // Positive section
     for (0..(counts.pos + 1)) |i| {
         const y: f32 = y0 - @as(f32, @floatFromInt(i)) * gap;
 
-        const y_value = info.compute_y_inv(y);
+        const y_value = info.computeYInv(y);
 
         var buffer = std.ArrayList(u8).init(self.arena.allocator());
         try buffer.writer().print("{d:.2}", .{ y_value });
@@ -475,7 +475,7 @@ fn draw_y_labels(self: *Figure, svg: *SVG, info: FigureInfo) !void {
     for (1..(counts.neg + 1)) |i| {
         const y: f32 = y0 + @as(f32, @floatFromInt(i)) * gap;
 
-        const y_value = info.compute_y_inv(y);
+        const y_value = info.computeYInv(y);
 
         var buffer = std.ArrayList(u8).init(self.arena.allocator());
         try buffer.writer().print("{d:.2}", .{ y_value });
@@ -494,17 +494,17 @@ fn draw_y_labels(self: *Figure, svg: *SVG, info: FigureInfo) !void {
 }
 
 /// Draw the labels on the x axis of the figure
-fn draw_x_labels(self: *Figure, svg: *SVG, info: FigureInfo) !void {
-    const gap = self.compute_y_tick_gap(info);
-    const counts = self.compute_y_tick_count(info, gap);
+fn drawXLabels(self: *Figure, svg: *SVG, info: FigureInfo) !void {
+    const gap = self.computeYTickGap(info);
+    const counts = self.computeYTickCount(info, gap);
 
-    const x0 = info.compute_x(0.0);
+    const x0 = info.computeX(0.0);
 
     // Positive section
     for (0..(counts.pos + 1)) |i| {
         const x: f32 = x0 + @as(f32, @floatFromInt(i)) * gap;
 
-        const x_value = info.compute_x_inv(x);
+        const x_value = info.computeXInv(x);
 
         var buffer = std.ArrayList(u8).init(self.arena.allocator());
         try buffer.writer().print("{d:.2}", .{ x_value });
@@ -525,7 +525,7 @@ fn draw_x_labels(self: *Figure, svg: *SVG, info: FigureInfo) !void {
     for (1..(counts.neg + 1)) |i| {
         const x: f32 = x0 - @as(f32, @floatFromInt(i)) * gap;
 
-        const x_value = info.compute_x_inv(x);
+        const x_value = info.computeXInv(x);
 
         var buffer = std.ArrayList(u8).init(self.arena.allocator());
         try buffer.writer().print("{d:.2}", .{ x_value });
@@ -543,7 +543,7 @@ fn draw_x_labels(self: *Figure, svg: *SVG, info: FigureInfo) !void {
     }
 }
 
-fn draw_legend(self: *Figure, svg: *SVG, info: FigureInfo) !void {
+fn drawLegend(self: *Figure, svg: *SVG, info: FigureInfo) !void {
     var plot_count: usize = 0;
     var longuest_title: usize = 0;
     for (self.plots.items) |plot| {
@@ -607,7 +607,7 @@ fn draw_legend(self: *Figure, svg: *SVG, info: FigureInfo) !void {
 pub fn show(self: *Figure) !SVG {
     if (self.plots.items.len == 0) return error.NoPlots;
 
-    const info = self.get_info();
+    const info = self.getInfo();
 
     var svg = SVG.init(
         self.allocator, 
@@ -629,8 +629,8 @@ pub fn show(self: *Figure) !SVG {
     });
 
     // Draw the grid
-    if (self.style.axis.show_grid_x) try self.draw_x_grid(&svg, info);
-    if (self.style.axis.show_grid_y) try self.draw_y_grid(&svg, info);
+    if (self.style.axis.show_grid_x) try self.drawXGrid(&svg, info);
+    if (self.style.axis.show_grid_y) try self.drawYGrid(&svg, info);
 
     // Draw the plots
     for (self.plots.items) |plot| {
@@ -638,20 +638,20 @@ pub fn show(self: *Figure) !SVG {
     }
 
     // y-axis
-    if (self.style.axis.show_y_axis) try self.draw_y_axis(&svg, info);
+    if (self.style.axis.show_y_axis) try self.drawYAxis(&svg, info);
 
     // x-axis
-    if (self.style.axis.show_x_axis) try self.draw_x_axis(&svg, info);
+    if (self.style.axis.show_x_axis) try self.drawXAxis(&svg, info);
 
     // Border
-    try self.draw_border(&svg, info);
+    try self.drawBorder(&svg, info);
 
     // Labels
-    try self.draw_x_labels(&svg, info);
-    try self.draw_y_labels(&svg, info);
+    try self.drawXLabels(&svg, info);
+    try self.drawYLabels(&svg, info);
 
     // Legend
-    if (self.style.legend.show) try self.draw_legend(&svg, info);
+    if (self.style.legend.show) try self.drawLegend(&svg, info);
 
     return svg;
 }

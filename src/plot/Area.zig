@@ -32,7 +32,7 @@ y: []const f32,
 style: Style = .{},
 
 /// Returns the range of the x values of the line plot
-pub fn get_x_range(impl: *const anyopaque) Range(f32) {
+fn getXRange(impl: *const anyopaque) Range(f32) {
     const self: *const Area = @ptrCast(@alignCast(impl));
     if (self.x) |x| {
         const min_max = std.mem.minMax(f32, x);
@@ -49,7 +49,7 @@ pub fn get_x_range(impl: *const anyopaque) Range(f32) {
 }
 
 /// Returns the range of the y values of the line plot
-pub fn get_y_range(impl: *const anyopaque) Range(f32) {
+fn getYRange(impl: *const anyopaque) Range(f32) {
     const self: *const Area = @ptrCast(@alignCast(impl));
     const min_max = std.mem.minMax(f32, self.y);
     return Range(f32) {
@@ -59,12 +59,12 @@ pub fn get_y_range(impl: *const anyopaque) Range(f32) {
 }
 
 /// The draw function for the area plot (converts the plot to SVG)
-pub fn draw(impl: *const anyopaque, allocator: Allocator, svg: *SVG, info: FigureInfo) !void {
+fn draw(impl: *const anyopaque, allocator: Allocator, svg: *SVG, info: FigureInfo) !void {
     const self: *const Area = @ptrCast(@alignCast(impl));
 
     if (self.x) |x_| {
         var points = std.ArrayList(f32).init(allocator);
-        try points.appendSlice(&[_]f32 {0.0, info.get_base_y()});
+        try points.appendSlice(&[_]f32 {0.0, info.getBaseY()});
         var last_x: ?f32 = null;
         for (x_, self.y) |x, y| {
             if (!info.x_range.contains(x)) continue;
@@ -74,14 +74,14 @@ pub fn draw(impl: *const anyopaque, allocator: Allocator, svg: *SVG, info: Figur
                 if (x > last_x_) last_x = x;
             } else last_x = x;
 
-            const x2 = info.compute_x(x);
-            const y2 = info.compute_y(y);
+            const x2 = info.computeX(x);
+            const y2 = info.computeY(y);
 
             try points.append(x2);
             try points.append(y2);
         }
 
-        if (last_x) |last_x_| try points.appendSlice(&[_]f32 {info.compute_x(last_x_), info.get_base_y()});
+        if (last_x) |last_x_| try points.appendSlice(&[_]f32 {info.computeX(last_x_), info.getBaseY()});
         try svg.addPolyline(.{
             .points = try points.toOwnedSlice(),
             .fill = self.style.color,
@@ -91,7 +91,7 @@ pub fn draw(impl: *const anyopaque, allocator: Allocator, svg: *SVG, info: Figur
         });
     } else {
         var points = std.ArrayList(f32).init(allocator);
-        try points.appendSlice(&[_]f32 {0.0, info.get_base_y()});
+        try points.appendSlice(&[_]f32 {0.0, info.getBaseY()});
         var last_x: ?f32 = null;
         for (self.y, 0..) |y, x| {
             if (!info.x_range.contains(@floatFromInt(x))) continue;
@@ -101,14 +101,14 @@ pub fn draw(impl: *const anyopaque, allocator: Allocator, svg: *SVG, info: Figur
                 if (@as(f32, @floatFromInt(x)) > last_x_) last_x = @floatFromInt(x);
             } else last_x = @floatFromInt(x);
 
-            const x2 = info.compute_x(@floatFromInt(x));
-            const y2 = info.compute_y(y);
+            const x2 = info.computeX(@floatFromInt(x));
+            const y2 = info.computeY(y);
 
             try points.append(x2);
             try points.append(y2);
         }
 
-        if (last_x) |last_x_| try points.appendSlice(&[_]f32 {info.compute_x(last_x_), info.get_base_y()});
+        if (last_x) |last_x_| try points.appendSlice(&[_]f32 {info.computeX(last_x_), info.getBaseY()});
         try svg.addPolyline(.{
             .points = try points.toOwnedSlice(),
             .fill = self.style.color,
@@ -125,8 +125,8 @@ pub fn interface(self: *const Area) Plot {
         @as(*const anyopaque, self),
         self.style.title,
         self.style.color,
-        &get_x_range,
-        &get_y_range,
+        &getXRange,
+        &getYRange,
         &draw
     );
 }

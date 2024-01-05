@@ -243,7 +243,7 @@ pub fn deinit(self: *const Text) void {
 }
 
 /// Write the text to the given writer
-pub fn write_to(self: *const Text, writer: anytype) anyerror!void {
+pub fn writeTo(self: *const Text, writer: anytype) anyerror!void {
     try writer.writeAll("<text ");
     try writer.print("x=\"{}\" ", .{self.options.x});
     try writer.print("y=\"{}\" ", .{self.options.y});

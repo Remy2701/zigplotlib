@@ -21,7 +21,8 @@ pub const Shape = enum {
     cross,
     cross_outline,
 
-    pub fn write_to(self: Shape, allocator: Allocator, svg: *SVG, x: f32, y: f32, radius: f32, color: RGB) !void {
+    /// Write the shape to the given SVG
+    pub fn writeTo(self: Shape, allocator: Allocator, svg: *SVG, x: f32, y: f32, radius: f32, color: RGB) !void {
         switch (self) {
             .circle => try svg.addCircle(.{ 
                 .center_x = .{ .pixel = x }, 

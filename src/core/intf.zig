@@ -2,8 +2,10 @@
 
 const std = @import("std");
 
+const comptimePrint = std.fmt.comptimePrint;
+
 /// Check if the given function (`Field`) is implemented for the `Actual` type.
-fn check_function_implementation(
+fn checkFunctionImplementation(
     comptime Interface: type,
     comptime Field: std.builtin.Type.StructField,
     comptime Actual: type,
@@ -16,7 +18,7 @@ fn check_function_implementation(
     if (function.Fn.is_var_args) @compileError("Variadic functions are not supported!");
 
     const actual = @typeInfo(Actual);
-    if (actual != .Struct) @compileError(std.fmt.comptimePrint("'{s}' should be a struct that implements '{s}'", .{
+    if (actual != .Struct) @compileError(comptimePrint("'{s}' should be a struct that implements '{s}'", .{
         @typeName(Actual),
         @typeName(Interface),
     }));
@@ -27,11 +29,11 @@ fn check_function_implementation(
             const Decl = @TypeOf(decl_);
             const decl_info = @typeInfo(Decl);
 
-            if (decl_info != .Fn) @compileError(std.fmt.comptimePrint("Invalid Type for '{s}', should be {s}", .{
+            if (decl_info != .Fn) @compileError(comptimePrint("Invalid Type for '{s}', should be {s}", .{
                 Field.name,
                 @typeName(Function),
             }));
-            if (decl_info.Fn.is_generic or decl_info.Fn.is_var_args) @compileError(std.fmt.comptimePrint("Invalid Type for '{s}', should be {s}", .{
+            if (decl_info.Fn.is_generic or decl_info.Fn.is_var_args) @compileError(comptimePrint("Invalid Type for '{s}', should be {s}", .{
                 Field.name,
                 @typeName(Function),
             }));
@@ -39,14 +41,14 @@ fn check_function_implementation(
             inline for (function.Fn.params, decl_info.Fn.params, 0..) |expected_param, actual_param, i| {
                 if (i == 0) {
                     if (expected_param.type == *const anyopaque) {
-                        if (actual_param.type != *const Actual) @compileError(std.fmt.comptimePrint("'self' (the 1st argument) should be of type '*const {s}'\nDefinition for '{s}':\n{s}", .{
+                        if (actual_param.type != *const Actual) @compileError(comptimePrint("'self' (the 1st argument) should be of type '*const {s}'\nDefinition for '{s}':\n{s}", .{
                             @typeName(Actual),
                             Field.name,
                             @typeName(Function),
                         }));   
                         continue;
                     } else if (expected_param.type == *anyopaque) {
-                        if (actual_param.type != *Actual) @compileError(std.fmt.comptimePrint("'self' (the 1st argument) should be of type '*{s}'\nDefinition for '{s}':\n{s}", .{
+                        if (actual_param.type != *Actual) @compileError(comptimePrint("'self' (the 1st argument) should be of type '*{s}'\nDefinition for '{s}':\n{s}", .{
                             @typeName(Actual),
                             Field.name,
                             @typeName(Function),
@@ -55,7 +57,7 @@ fn check_function_implementation(
                     }
                 }
 
-                if (expected_param.type != actual_param.type) @compileError(std.fmt.format("arg{d} is invalid, expected: {s}, given: {s}.\nDefinition for '{s}':\n{s}", .{
+                if (expected_param.type != actual_param.type) @compileError(comptimePrint("arg{d} is invalid, expected: {s}, given: {s}.\nDefinition for '{s}':\n{s}", .{
                     i,
                     @typeName(expected_param.type),
                     @typeName(actual_param.type),
@@ -64,7 +66,7 @@ fn check_function_implementation(
                 }));
             }
 
-            if (function.Fn.return_type != decl_info.Fn.return_type) @compileError(std.fmt.comptimePrint("Invalid return type for '{s}', should be {s}\nDefinition for '{s}':\n{s}", .{
+            if (function.Fn.return_type != decl_info.Fn.return_type) @compileError(comptimePrint("Invalid return type for '{s}', should be {s}\nDefinition for '{s}':\n{s}", .{
                 Field.name,
                 @typeName(Function),
                 Field.name,
@@ -75,7 +77,7 @@ fn check_function_implementation(
         }
     }
 
-    @compileError(std.fmt.comptimePrint("'{s}' does not implement the function '{s}' and therefore does not meet the requirement of '{s}'.\nDefinition for '{s}':\n{s}", .{
+    @compileError(comptimePrint("'{s}' does not implement the function '{s}' and therefore does not meet the requirement of '{s}'.\nDefinition for '{s}':\n{s}", .{
         @typeName(Actual),
         Field.name,
         @typeName(Interface),
@@ -85,7 +87,7 @@ fn check_function_implementation(
 }
 
 /// Ensure that the `Actual` type implements the given `Interface` type.
-pub fn ensure_implement(
+pub fn ensureImplement(
     comptime Interface: type,
     comptime Actual: type, 
 ) void {
@@ -94,6 +96,6 @@ pub fn ensure_implement(
     if (interface != .Struct) @compileError("The Interface should be a struct containing the functions as fields");
 
     inline for (interface.Struct.fields) |field| {
-        check_function_implementation(Interface, field, Actual);
+        checkFunctionImplementation(Interface, field, Actual);
     }
 }

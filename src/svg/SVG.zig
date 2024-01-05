@@ -94,7 +94,7 @@ const SVG_HEADER =
 ;
 
 /// Write the SVG to the given writer
-pub fn write_to(self: *const SVG, writer: anytype) anyerror!void {
+pub fn writeTo(self: *const SVG, writer: anytype) anyerror!void {
     // Write the header
     try writer.print(SVG_HEADER, .{
         self.width, 
@@ -106,7 +106,7 @@ pub fn write_to(self: *const SVG, writer: anytype) anyerror!void {
     });
     // Write the data
     for (self.data.items) |kind| {
-        try kind.write_to(writer);
+        try kind.writeTo(writer);
         try writer.writeByte('\n');
     }
     // End of the SVG

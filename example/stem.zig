@@ -47,5 +47,5 @@ pub fn main() !void {
     var file = try std.fs.cwd().createFile("example/out/stem.svg", .{});
     defer file.close();
 
-    try svg.write_to(file.writer());
+    try svg.writeTo(file.writer());
 }

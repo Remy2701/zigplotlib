@@ -32,7 +32,7 @@ y: []const f32,
 style: Style = .{},
 
 /// Returns the range of the x values of the line plot
-pub fn get_x_range(impl: *const anyopaque) Range(f32) {
+fn getXRange(impl: *const anyopaque) Range(f32) {
     const self: *const Line = @ptrCast(@alignCast(impl));
     if (self.x) |x| {
         const min_max = std.mem.minMax(f32, x);
@@ -49,7 +49,7 @@ pub fn get_x_range(impl: *const anyopaque) Range(f32) {
 }
 
 /// Returns the range of the y values of the line plot
-pub fn get_y_range(impl: *const anyopaque) Range(f32) {
+fn getYRange(impl: *const anyopaque) Range(f32) {
     const self: *const Line = @ptrCast(@alignCast(impl));
     const min_max = std.mem.minMax(f32, self.y);
     return Range(f32) {
@@ -59,7 +59,7 @@ pub fn get_y_range(impl: *const anyopaque) Range(f32) {
 }
 
 /// Draws the line plot (converts to SVG)
-pub fn draw(impl: *const anyopaque, allocator: Allocator, svg: *SVG, info: FigureInfo) !void {
+fn draw(impl: *const anyopaque, allocator: Allocator, svg: *SVG, info: FigureInfo) !void {
     const self: *const Line = @ptrCast(@alignCast(impl));
 
     const stroke_dash_array: ?[]const f32 = if (self.style.dash) |dash| try allocator.dupe(f32, &[_]f32 { dash }) else null;
@@ -77,10 +77,10 @@ pub fn draw(impl: *const anyopaque, allocator: Allocator, svg: *SVG, info: Figur
                 continue; // Skipping the 1st iteration
             }
 
-            const x1 = info.compute_x(previous_x.?);
-            const y1 = info.compute_y(previous.?);
-            const x2 = info.compute_x(x);
-            const y2 = info.compute_y(y);
+            const x1 = info.computeX(previous_x.?);
+            const y1 = info.computeY(previous.?);
+            const x2 = info.computeX(x);
+            const y2 = info.computeY(y);
 
             try svg.addLine(
                 .{ 
@@ -110,10 +110,10 @@ pub fn draw(impl: *const anyopaque, allocator: Allocator, svg: *SVG, info: Figur
                 continue; // Skipping the 1st iteration
             }
 
-            const x1 = info.compute_x(previous_x.?);
-            const y1 = info.compute_y(previous.?);
-            const x2 = info.compute_x(@floatFromInt(x));
-            const y2 = info.compute_y(y);
+            const x1 = info.computeX(previous_x.?);
+            const y1 = info.computeY(previous.?);
+            const x2 = info.computeX(@floatFromInt(x));
+            const y2 = info.computeY(y);
 
             try svg.addLine(
                 .{ 
@@ -139,8 +139,8 @@ pub fn interface(self: *const Line) Plot {
         @as(*const anyopaque, self),
         self.style.title,
         self.style.color,
-        &get_x_range,
-        &get_y_range,
+        &getXRange,
+        &getYRange,
         &draw
     );
 }

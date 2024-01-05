@@ -37,11 +37,11 @@ pub fn init(
     };
 }
 
-pub fn get_range_x(self: *const Plot) Range(f32) {
+pub fn getRangeX(self: *const Plot) Range(f32) {
     return self.get_range_x_fn(self.impl);
 }
 
-pub fn get_range_y(self: *const Plot) Range(f32) {
+pub fn getRangeY(self: *const Plot) Range(f32) {
     return self.get_range_y_fn(self.impl);
 }
 

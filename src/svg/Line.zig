@@ -64,7 +64,7 @@ pub fn init(options: Options) Line {
 }
 
 /// Write the line to the given writer
-pub fn write_to(self: *const Line, writer: anytype) anyerror!void {
+pub fn writeTo(self: *const Line, writer: anytype) anyerror!void {
     try writer.writeAll("<line ");
     try writer.print("x1=\"{}\" ", .{self.options.x1});
     try writer.print("y1=\"{}\" ", .{self.options.y1});

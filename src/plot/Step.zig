@@ -30,7 +30,7 @@ y: []const f32,
 style: Style = .{},
 
 /// Returns the range of the x values of the step plot
-pub fn get_x_range(impl: *const anyopaque) Range(f32) {
+pub fn getXRange(impl: *const anyopaque) Range(f32) {
     const self: *const Step = @ptrCast(@alignCast(impl));
     if (self.x) |x| {
         const min_max = std.mem.minMax(f32, x);
@@ -47,7 +47,7 @@ pub fn get_x_range(impl: *const anyopaque) Range(f32) {
 }
 
 /// Returns the range of the y values of the step plot
-pub fn get_y_range(impl: *const anyopaque) Range(f32) {
+pub fn getYRange(impl: *const anyopaque) Range(f32) {
     const self: *const Step = @ptrCast(@alignCast(impl));
     const min_max = std.mem.minMax(f32, self.y);
     return Range(f32) {
@@ -75,9 +75,9 @@ pub fn draw(impl: *const anyopaque, allocator: Allocator, svg: *SVG, info: Figur
             }
 
             if (y != previous.?) {
-                const x1 = info.compute_x(previous_x.?);
-                const y1 = info.compute_y(previous.?);
-                const y2 = info.compute_y(y);
+                const x1 = info.computeX(previous_x.?);
+                const y1 = info.computeY(previous.?);
+                const y2 = info.computeY(y);
 
                 try svg.addLine(.{
                     .x1 = .{ .pixel = x1 },
@@ -89,9 +89,9 @@ pub fn draw(impl: *const anyopaque, allocator: Allocator, svg: *SVG, info: Figur
                 });
             }
 
-            const x1 = info.compute_x(previous_x.?);
-            const y1 = info.compute_y(y);
-            const x2 = info.compute_x(x);
+            const x1 = info.computeX(previous_x.?);
+            const y1 = info.computeY(y);
+            const x2 = info.computeX(x);
 
             try svg.addLine(
                 .{ 
@@ -121,9 +121,9 @@ pub fn draw(impl: *const anyopaque, allocator: Allocator, svg: *SVG, info: Figur
             }
 
             if (y != previous.?) {
-                const x1 = info.compute_x(previous_x.?);
-                const y1 = info.compute_y(previous.?);
-                const y2 = info.compute_y(y);
+                const x1 = info.computeX(previous_x.?);
+                const y1 = info.computeY(previous.?);
+                const y2 = info.computeY(y);
 
                 try svg.addLine(.{
                     .x1 = .{ .pixel = x1 },
@@ -135,9 +135,9 @@ pub fn draw(impl: *const anyopaque, allocator: Allocator, svg: *SVG, info: Figur
                 });
             }
 
-            const x1 = info.compute_x(previous_x.?);
-            const y1 = info.compute_y(y);
-            const x2 = info.compute_x(@floatFromInt(x));
+            const x1 = info.computeX(previous_x.?);
+            const y1 = info.computeY(y);
+            const x2 = info.computeX(@floatFromInt(x));
 
             try svg.addLine(
                 .{ 
@@ -162,8 +162,8 @@ pub fn interface(self: *const Step) Plot {
         @as(*const anyopaque, self),
         self.style.title,
         self.style.color,
-        &get_x_range,
-        &get_y_range,
+        &getXRange,
+        &getYRange,
         &draw
     );
 }

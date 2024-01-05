@@ -19,13 +19,13 @@ pub const Kind = union(enum) {
     text: SVG.Text,
 
     /// Write the Kind to the given writer
-    pub fn write_to(self: *const Kind, writer: anytype) anyerror!void {
+    pub fn writeTo(self: *const Kind, writer: anytype) anyerror!void {
         try switch (self.*) {
-            .line => |line| line.write_to(writer),
-            .rect => |rect| rect.write_to(writer),
-            .circle => |circle| circle.write_to(writer),
-            .polyline => |polyline| polyline.write_to(writer),
-            .text => |text| text.write_to(writer),            
+            .line => |line| line.writeTo(writer),
+            .rect => |rect| rect.writeTo(writer),
+            .circle => |circle| circle.writeTo(writer),
+            .polyline => |polyline| polyline.writeTo(writer),
+            .text => |text| text.writeTo(writer),            
         };
     }
 

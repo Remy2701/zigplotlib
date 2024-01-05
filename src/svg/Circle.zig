@@ -44,7 +44,7 @@ pub fn init(options: Options) Circle {
 }
 
 /// Write the circle to the given writer
-pub fn write_to(self: *const Circle, writer: anytype) anyerror!void {
+pub fn writeTo(self: *const Circle, writer: anytype) anyerror!void {
     try writer.writeAll("<circle ");
     try writer.print("cx=\"{}\" ", .{self.options.center_x});
     try writer.print("cy=\"{}\" ", .{self.options.center_y});

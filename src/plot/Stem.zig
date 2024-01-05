@@ -36,7 +36,7 @@ y: []const f32,
 style: Style = .{},
 
 /// Returns the range of the x values of the stem plot
-pub fn get_x_range(impl: *const anyopaque) Range(f32) {
+pub fn getXRange(impl: *const anyopaque) Range(f32) {
     const self: *const Stem = @ptrCast(@alignCast(impl));
     if (self.x) |x| {
         const min_max = std.mem.minMax(f32, x);
@@ -53,7 +53,7 @@ pub fn get_x_range(impl: *const anyopaque) Range(f32) {
 }
 
 /// Returns the range of the y values of the stem plot
-pub fn get_y_range(impl: *const anyopaque) Range(f32) {
+pub fn getYRange(impl: *const anyopaque) Range(f32) {
     const self: *const Stem = @ptrCast(@alignCast(impl));
     const min_max = std.mem.minMax(f32, self.y);
     return Range(f32) {
@@ -66,14 +66,14 @@ pub fn get_y_range(impl: *const anyopaque) Range(f32) {
 pub fn draw(impl: *const anyopaque, allocator: Allocator, svg: *SVG, info: FigureInfo) !void {
     const self: *const Stem = @ptrCast(@alignCast(impl));
 
-    const y_base = info.get_base_y();
+    const y_base = info.getBaseY();
     if (self.x) |x_| {
         for(x_, self.y) |x, y| {
             if (!info.x_range.contains(x)) continue;
             if (!info.y_range.contains(y)) continue;
 
-            const y1 = info.compute_y(y);
-            const x1 = info.compute_x(x);
+            const y1 = info.computeY(y);
+            const x1 = info.computeX(x);
 
             try svg.addLine(
                 .{ 
@@ -86,15 +86,15 @@ pub fn draw(impl: *const anyopaque, allocator: Allocator, svg: *SVG, info: Figur
                 },
             );
 
-            try self.style.shape.write_to(allocator, svg, x1, y1, self.style.radius, self.style.color);
+            try self.style.shape.writeTo(allocator, svg, x1, y1, self.style.radius, self.style.color);
         }
     } else {
         for (self.y, 0..) |y, x| {
             if (!info.x_range.contains(@floatFromInt(x))) continue;
             if (!info.y_range.contains(y)) continue;
 
-            const y1 = info.compute_y(y);
-            const x1 = info.compute_x(@floatFromInt(x));
+            const y1 = info.computeY(y);
+            const x1 = info.computeX(@floatFromInt(x));
 
             try svg.addLine(
                 .{ 
@@ -107,7 +107,7 @@ pub fn draw(impl: *const anyopaque, allocator: Allocator, svg: *SVG, info: Figur
                 },
             );
 
-            try self.style.shape.write_to(allocator, svg, x1, y1, self.style.radius, self.style.color);
+            try self.style.shape.writeTo(allocator, svg, x1, y1, self.style.radius, self.style.color);
         }
     }
 }
@@ -118,8 +118,8 @@ pub fn interface(self: *const Stem) Plot {
         @as(*const anyopaque, self),
         self.style.title,
         self.style.color,
-        &get_x_range,
-        &get_y_range,
+        &getXRange,
+        &getYRange,
         &draw
     );
 }

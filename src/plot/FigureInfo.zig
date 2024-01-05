@@ -18,47 +18,47 @@ x_range: Range(f32),
 y_range: Range(f32),
 
 /// Get the delta x of the figure.
-pub fn get_dx(self: *const FigureInfo) f32 {
+pub fn getDx(self: *const FigureInfo) f32 {
     return self.width / (self.x_range.max - self.x_range.min);
 }
 
 /// Get the delta y of the figure.
-pub fn get_dy(self: *const FigureInfo) f32 {
+pub fn getDy(self: *const FigureInfo) f32 {
     return self.height / (self.y_range.max - self.y_range.min);
 }
 
 /// Compute the x coordinate of a point in the figure
-pub fn compute_x(self: *const FigureInfo, x: f32) f32 {
-    return (x - self.x_range.min) * self.get_dx();
+pub fn computeX(self: *const FigureInfo, x: f32) f32 {
+    return (x - self.x_range.min) * self.getDx();
 }
 
 /// Compute the y coordinate of a point in the figure
-pub fn compute_y(self: *const FigureInfo, y: f32) f32 {
-    return self.height - (y - self.y_range.min) * self.get_dy();
+pub fn computeY(self: *const FigureInfo, y: f32) f32 {
+    return self.height - (y - self.y_range.min) * self.getDy();
 }
 
 /// Compute the inverse x coordinate of a point in the figure
-pub fn compute_x_inv(self: *const FigureInfo, x: f32) f32 {
-    return x / self.get_dx() + self.x_range.min;
+pub fn computeXInv(self: *const FigureInfo, x: f32) f32 {
+    return x / self.getDx() + self.x_range.min;
 }
 
 /// Compute the inverse y coordinate of a point in the figure
-pub fn compute_y_inv(self: *const FigureInfo, y: f32) f32 {
-    return (self.height - y) / self.get_dy() + self.y_range.min;
+pub fn computeYInv(self: *const FigureInfo, y: f32) f32 {
+    return (self.height - y) / self.getDy() + self.y_range.min;
 }
 
 /// Get the base-y coordinate (0.0, or minimum, or maximum)
-pub fn get_base_y(self: *const FigureInfo) f32 {
-    if (self.y_range.contains(0)) return self.compute_y(0.0)
-    else if (self.y_range.min < 0.0) return self.compute_y(self.y_range.max)
-    else return self.compute_y(self.y_range.min);
+pub fn getBaseY(self: *const FigureInfo) f32 {
+    if (self.y_range.contains(0)) return self.computeY(0.0)
+    else if (self.y_range.min < 0.0) return self.computeY(self.y_range.max)
+    else return self.computeY(self.y_range.min);
 }
 
 /// Get the base-x coordinate (0.0, or minimum, or maximum)
-pub fn get_base_x(self: *const FigureInfo) f32 {
-    if (self.x_range.contains(0)) return self.compute_x(0.0)
-    else if (self.x_range.min < 0.0) return self.compute_x(self.x_range.max)
-    else return self.compute_x(self.x_range.min);
+pub fn getBaseX(self: *const FigureInfo) f32 {
+    if (self.x_range.contains(0)) return self.computeX(0.0)
+    else if (self.x_range.min < 0.0) return self.computeX(self.x_range.max)
+    else return self.computeX(self.x_range.min);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -73,7 +73,7 @@ test "compute Δx - Positive Zero" {
         .y_range = Range(f32).init(0.0, 0.0),
     };
 
-    const dx = info.get_dx();
+    const dx = info.getDx();
 
     try std.testing.expectEqual(@as(f32, 10.0), dx);
 }
@@ -86,7 +86,7 @@ test "compute Δx - Positive" {
         .y_range = Range(f32).init(0.0, 0.0),
     };
 
-    const dx = info.get_dx();
+    const dx = info.getDx();
 
     try std.testing.expectEqual(@as(f32, 20.0), dx);
 }
@@ -99,7 +99,7 @@ test "compute Δx - Negative Zero" {
         .y_range = Range(f32).init(0.0, 0.0),
     };
 
-    const dx = info.get_dx();
+    const dx = info.getDx();
 
     try std.testing.expectEqual(@as(f32, 10.0), dx);
 }
@@ -112,7 +112,7 @@ test "compute Δx - Negative" {
         .y_range = Range(f32).init(0.0, 0.0),
     };
 
-    const dx = info.get_dx();
+    const dx = info.getDx();
 
     try std.testing.expectEqual(@as(f32, 20.0), dx);
 }
@@ -125,7 +125,7 @@ test "compute Δx - Positive & Negative" {
         .y_range = Range(f32).init(0.0, 0.0),
     };
 
-    const dx = info.get_dx();
+    const dx = info.getDx();
 
     try std.testing.expectEqual(@as(f32, 5.0), dx);
 }
@@ -142,7 +142,7 @@ test "compute Δy - Positive Zero" {
         .y_range = Range(f32).init(0.0, 10.0),
     };
 
-    const dy = info.get_dy();
+    const dy = info.getDy();
 
     try std.testing.expectEqual(@as(f32, 10.0), dy);
 }
@@ -155,7 +155,7 @@ test "compute Δy - Positive" {
         .y_range = Range(f32).init(5.0, 10.0),
     };
 
-    const dy = info.get_dy();
+    const dy = info.getDy();
 
     try std.testing.expectEqual(@as(f32, 20.0), dy);
 }
@@ -168,7 +168,7 @@ test "compute Δy - Negative Zero" {
         .y_range = Range(f32).init(-10.0, 0.0),
     };
 
-    const dy = info.get_dy();
+    const dy = info.getDy();
 
     try std.testing.expectEqual(@as(f32, 10.0), dy);
 }
@@ -181,7 +181,7 @@ test "compute Δy - Negative" {
         .y_range = Range(f32).init(-10.0, -5.0),
     };
 
-    const dy = info.get_dy();
+    const dy = info.getDy();
 
     try std.testing.expectEqual(@as(f32, 20.0), dy);
 }
@@ -194,7 +194,7 @@ test "compute Δy - Positive & Negative" {
         .y_range = Range(f32).init(-10.0, 10.0),
     };
 
-    const dy = info.get_dy();
+    const dy = info.getDy();
 
     try std.testing.expectEqual(@as(f32, 5.0), dy);
 }
@@ -212,15 +212,15 @@ test "compute x - Positive Zero" {
     };
 
     // start of the range
-    const x_start = info.compute_x(0.0);     
+    const x_start = info.computeX(0.0);     
     try std.testing.expectEqual(@as(f32, 0.0), x_start);
 
     // Middle of the range
-    const x_middle = info.compute_x(5.0);     
+    const x_middle = info.computeX(5.0);     
     try std.testing.expectEqual(@as(f32, 50.0), x_middle);
     
     // End of the range
-    const x_end = info.compute_x(10.0);   
+    const x_end = info.computeX(10.0);   
     try std.testing.expectEqual(@as(f32, 100.0), x_end);
 }
 
@@ -233,15 +233,15 @@ test "compute x - Positive" {
     };
 
     // start of the range
-    const x_start = info.compute_x(5.0);     
+    const x_start = info.computeX(5.0);     
     try std.testing.expectEqual(@as(f32, 0.0), x_start);
 
     // Middle of the range
-    const x_middle = info.compute_x(7.5);     
+    const x_middle = info.computeX(7.5);     
     try std.testing.expectEqual(@as(f32, 50.0), x_middle);
     
     // End of the range
-    const x_end = info.compute_x(10.0);   
+    const x_end = info.computeX(10.0);   
     try std.testing.expectEqual(@as(f32, 100.0), x_end);
 }
 
@@ -254,15 +254,15 @@ test "compute x - Negative Zero" {
     };
 
     // start of the range
-    const x_start = info.compute_x(-10.0);     
+    const x_start = info.computeX(-10.0);     
     try std.testing.expectEqual(@as(f32, 0.0), x_start);
 
     // Middle of the range
-    const x_middle = info.compute_x(-5.0);     
+    const x_middle = info.computeX(-5.0);     
     try std.testing.expectEqual(@as(f32, 50.0), x_middle);
     
     // End of the range
-    const x_end = info.compute_x(0.0);   
+    const x_end = info.computeX(0.0);   
     try std.testing.expectEqual(@as(f32, 100.0), x_end);
 }
 
@@ -275,15 +275,15 @@ test "compute x - Negative" {
     };
 
     // start of the range
-    const x_start = info.compute_x(-10.0);     
+    const x_start = info.computeX(-10.0);     
     try std.testing.expectEqual(@as(f32, 0.0), x_start);
 
     // Middle of the range
-    const x_middle = info.compute_x(-7.5);     
+    const x_middle = info.computeX(-7.5);     
     try std.testing.expectEqual(@as(f32, 50.0), x_middle);
     
     // End of the range
-    const x_end = info.compute_x(-5.0);   
+    const x_end = info.computeX(-5.0);   
     try std.testing.expectEqual(@as(f32, 100.0), x_end);
 }
 
@@ -296,15 +296,15 @@ test "compute x - Positive & Negative" {
     };
 
     // start of the range
-    const x_start = info.compute_x(-10.0);     
+    const x_start = info.computeX(-10.0);     
     try std.testing.expectEqual(@as(f32, 0.0), x_start);
 
     // Middle of the range
-    const x_middle = info.compute_x(0.0);     
+    const x_middle = info.computeX(0.0);     
     try std.testing.expectEqual(@as(f32, 50.0), x_middle);
     
     // End of the range
-    const x_end = info.compute_x(10.0);   
+    const x_end = info.computeX(10.0);   
     try std.testing.expectEqual(@as(f32, 100.0), x_end);
 }
 
@@ -321,15 +321,15 @@ test "compute y - Positive Zero" {
     };
 
     // start of the range
-    const y_start = info.compute_y(0.0);     
+    const y_start = info.computeY(0.0);     
     try std.testing.expectEqual(@as(f32, 100.0), y_start);
 
     // Middle of the range
-    const y_middle = info.compute_y(5.0);     
+    const y_middle = info.computeY(5.0);     
     try std.testing.expectEqual(@as(f32, 50.0), y_middle);
     
     // End of the range
-    const y_end = info.compute_y(10.0);   
+    const y_end = info.computeY(10.0);   
     try std.testing.expectEqual(@as(f32, 0.0), y_end);
 }
 
@@ -342,15 +342,15 @@ test "compute y - Positive" {
     };
 
     // start of the range
-    const y_start = info.compute_y(5.0);     
+    const y_start = info.computeY(5.0);     
     try std.testing.expectEqual(@as(f32, 100.0), y_start);
 
     // Middle of the range
-    const y_middle = info.compute_y(7.5);     
+    const y_middle = info.computeY(7.5);     
     try std.testing.expectEqual(@as(f32, 50.0), y_middle);
     
     // End of the range
-    const y_end = info.compute_y(10.0);   
+    const y_end = info.computeY(10.0);   
     try std.testing.expectEqual(@as(f32, 0.0), y_end);
 }
 
@@ -363,15 +363,15 @@ test "compute y - Negative Zero" {
     };
 
     // start of the range
-    const y_start = info.compute_y(-10.0);     
+    const y_start = info.computeY(-10.0);     
     try std.testing.expectEqual(@as(f32, 100.0), y_start);
 
     // Middle of the range
-    const y_middle = info.compute_y(-5.0);     
+    const y_middle = info.computeY(-5.0);     
     try std.testing.expectEqual(@as(f32, 50.0), y_middle);
     
     // End of the range
-    const y_end = info.compute_y(0.0);   
+    const y_end = info.computeY(0.0);   
     try std.testing.expectEqual(@as(f32, 0.0), y_end);
 }
 
@@ -384,15 +384,15 @@ test "compute y - Negative" {
     };
 
     // start of the range
-    const y_start = info.compute_y(-10.0);     
+    const y_start = info.computeY(-10.0);     
     try std.testing.expectEqual(@as(f32, 100.0), y_start);
 
     // Middle of the range
-    const y_middle = info.compute_y(-7.5);     
+    const y_middle = info.computeY(-7.5);     
     try std.testing.expectEqual(@as(f32, 50.0), y_middle);
     
     // End of the range
-    const y_end = info.compute_y(-5.0);   
+    const y_end = info.computeY(-5.0);   
     try std.testing.expectEqual(@as(f32, 0.0), y_end);
 }
 
@@ -405,14 +405,14 @@ test "compute y - Positive & Negative" {
     };
 
     // start of the range
-    const y_start = info.compute_y(-10.0);   
+    const y_start = info.computeY(-10.0);   
     try std.testing.expectEqual(@as(f32, 100.0), y_start);
 
     // Middle of the range
-    const y_middle = info.compute_y(0.0);     
+    const y_middle = info.computeY(0.0);     
     try std.testing.expectEqual(@as(f32, 50.0), y_middle);
     
     // End of the range
-    const y_end = info.compute_y(10.0);   
+    const y_end = info.computeY(10.0);   
     try std.testing.expectEqual(@as(f32, 0.0), y_end);
 }

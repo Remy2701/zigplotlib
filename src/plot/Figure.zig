@@ -10,6 +10,8 @@ const RGB = rgb.RGB;
 const Plot = @import("Plot.zig");
 const FigureInfo = @import("FigureInfo.zig");
 
+const intf = @import("../core/intf.zig");
+
 const Figure = @This();
 
 /// The Default Values used for the figure
@@ -158,6 +160,10 @@ pub fn addPlot(self: *Figure, plot: anytype) !void {
     if (@TypeOf(plot) == Plot) {
         try self.plots.append(plot);
     } else {
+        intf.ensure_implement(struct {
+            interface: fn(*const anyopaque) Plot
+        }, @TypeOf(plot));
+
         const mem = try self.arena.allocator().create(@TypeOf(plot));
         mem.* = plot;
         try self.plots.append(mem.interface());

@@ -71,9 +71,8 @@ pub fn build(b: *std.Build) void {
         .optimize = optimize,
     });
 
-    const lib_module = lib.addModule("zigplotlib", .{
+    const lib_module = b.addModule("zigplotlib", .{
         .source_file = .{ .path = "src/root.zig" },
-        .dependencies = &.{}
     });
 
     // This declares intent for the library to be installed into the standard

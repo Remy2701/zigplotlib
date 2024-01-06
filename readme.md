@@ -256,6 +256,9 @@ figure.addPlot(Line {
 There are currently 3 types of plots supported:
 
 ### Line
+
+![Line Plot](example/out/line.svg)
+
 The options for styling the line plot are:
 
 | Option | Type | Description |

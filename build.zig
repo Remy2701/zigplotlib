@@ -84,6 +84,7 @@ pub fn build(b: *std.Build) void {
     add_start_point(b, target, optimize, "step-example", "Run the Step example", "example/step.zig", lib_module);
     add_start_point(b, target, optimize, "stem-example", "Run the Stem example", "example/stem.zig", lib_module);
     add_start_point(b, target, optimize, "scatter-example", "Run the Scatter example", "example/scatter.zig", lib_module);
+    add_start_point(b, target, optimize, "line-example", "Run the Line example", "example/line.zig", lib_module);
 
     // Creates a step for unit testing. This only builds the test executable
     // but does not run it.

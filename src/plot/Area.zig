@@ -64,7 +64,7 @@ fn draw(impl: *const anyopaque, allocator: Allocator, svg: *SVG, info: FigureInf
 
     if (self.x) |x_| {
         var points = std.ArrayList(f32).init(allocator);
-        try points.appendSlice(&[_]f32 {0.0, info.getBaseY()});
+        try points.appendSlice(&[_]f32 {info.computeX(x_[0]), info.getBaseY()});
         var last_x: ?f32 = null;
         for (x_, self.y) |x, y| {
             if (!info.x_range.contains(x)) continue;
@@ -91,7 +91,7 @@ fn draw(impl: *const anyopaque, allocator: Allocator, svg: *SVG, info: FigureInf
         });
     } else {
         var points = std.ArrayList(f32).init(allocator);
-        try points.appendSlice(&[_]f32 {0.0, info.getBaseY()});
+        try points.appendSlice(&[_]f32 {info.computeX(0.0), info.getBaseY()});
         var last_x: ?f32 = null;
         for (self.y, 0..) |y, x| {
             if (!info.x_range.contains(@floatFromInt(x))) continue;

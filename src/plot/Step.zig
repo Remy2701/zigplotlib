@@ -30,7 +30,7 @@ y: []const f32,
 style: Style = .{},
 
 /// Returns the range of the x values of the step plot
-pub fn getXRange(impl: *const anyopaque) Range(f32) {
+fn getXRange(impl: *const anyopaque) Range(f32) {
     const self: *const Step = @ptrCast(@alignCast(impl));
     if (self.x) |x| {
         const min_max = std.mem.minMax(f32, x);
@@ -47,7 +47,7 @@ pub fn getXRange(impl: *const anyopaque) Range(f32) {
 }
 
 /// Returns the range of the y values of the step plot
-pub fn getYRange(impl: *const anyopaque) Range(f32) {
+fn getYRange(impl: *const anyopaque) Range(f32) {
     const self: *const Step = @ptrCast(@alignCast(impl));
     const min_max = std.mem.minMax(f32, self.y);
     return Range(f32) {
@@ -57,7 +57,7 @@ pub fn getYRange(impl: *const anyopaque) Range(f32) {
 }
 
 /// Draws the step plot (converts to SVG)
-pub fn draw(impl: *const anyopaque, allocator: Allocator, svg: *SVG, info: FigureInfo) !void {
+fn draw(impl: *const anyopaque, allocator: Allocator, svg: *SVG, info: FigureInfo) !void {
     const self: *const Step = @ptrCast(@alignCast(impl));
     _ = allocator;
 

@@ -269,6 +269,9 @@ The options for styling the line plot are:
 | `dash` | `?f32` | The length of the dash for the line (null means no dash)  |
 
 ### Area
+
+![Area Plot](example/out/area.svg)
+
 The options for styling the area plot are:
 
 | Option | Type | Description |

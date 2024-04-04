@@ -1,11 +1,11 @@
 const std = @import("std");
 
-fn add_start_point(
-    b: *std.Build, 
-    target: std.Build.ResolvedTarget, 
-    optimize: std.builtin.OptimizeMode, 
-    name: []const u8, 
-    description: []const u8, 
+fn addStartPoint(
+    b: *std.Build,
+    target: std.Build.ResolvedTarget,
+    optimize: std.builtin.OptimizeMode,
+    name: []const u8,
+    description: []const u8,
     path: []const u8,
     module: *std.Build.Module,
 ) void {
@@ -80,12 +80,12 @@ pub fn build(b: *std.Build) void {
     // running `zig build`).
     b.installArtifact(lib);
 
-    add_start_point(b, target, optimize, "run", "Run the App", "src/main.zig", lib_module);
-    add_start_point(b, target, optimize, "step-example", "Run the Step example", "example/step.zig", lib_module);
-    add_start_point(b, target, optimize, "stem-example", "Run the Stem example", "example/stem.zig", lib_module);
-    add_start_point(b, target, optimize, "scatter-example", "Run the Scatter example", "example/scatter.zig", lib_module);
-    add_start_point(b, target, optimize, "line-example", "Run the Line example", "example/line.zig", lib_module);
-    add_start_point(b, target, optimize, "area-example", "Run the Area example", "example/area.zig", lib_module);
+    addStartPoint(b, target, optimize, "run", "Run the App", "src/main.zig", lib_module);
+    addStartPoint(b, target, optimize, "step-example", "Run the Step example", "example/step.zig", lib_module);
+    addStartPoint(b, target, optimize, "stem-example", "Run the Stem example", "example/stem.zig", lib_module);
+    addStartPoint(b, target, optimize, "scatter-example", "Run the Scatter example", "example/scatter.zig", lib_module);
+    addStartPoint(b, target, optimize, "line-example", "Run the Line example", "example/line.zig", lib_module);
+    addStartPoint(b, target, optimize, "area-example", "Run the Area example", "example/area.zig", lib_module);
 
     // Creates a step for unit testing. This only builds the test executable
     // but does not run it.

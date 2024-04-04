@@ -37,7 +37,7 @@ const zigplotlib = b.dependency("zigplotlib", .{
     .optimize = optimize,
 });
 
-exe.addModule("plotlib", zigplotlib.module("zigplotlib"));
+exe.root_module.addImport("plotlib", zigplotlib.module("zigplotlib"));
 ```
 
 The name of the module (`plotlib`) can be changed to whatever you want.

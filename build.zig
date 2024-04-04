@@ -2,12 +2,12 @@ const std = @import("std");
 
 fn add_start_point(
     b: *std.Build, 
-    target: std.zig.CrossTarget, 
+    target: std.Build.ResolvedTarget, 
     optimize: std.builtin.OptimizeMode, 
     name: []const u8, 
     description: []const u8, 
     path: []const u8,
-    module: *std.build.Module,
+    module: *std.Build.Module,
 ) void {
     const exe = b.addExecutable(.{
         .name = "zigplotlib",
@@ -16,7 +16,7 @@ fn add_start_point(
         .optimize = optimize,
     });
 
-    exe.addModule("zigplotlib", module);
+    exe.root_module.addImport("zigplotlib", module);
 
     // This declares intent for the executable to be installed into the
     // standard location when the user invokes the "install" step (the default
@@ -72,7 +72,7 @@ pub fn build(b: *std.Build) void {
     });
 
     const lib_module = b.addModule("zigplotlib", .{
-        .source_file = .{ .path = "src/root.zig" },
+        .root_source_file = .{ .path = "src/root.zig" },
     });
 
     // This declares intent for the library to be installed into the standard

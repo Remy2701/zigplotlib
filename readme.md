@@ -176,9 +176,19 @@ The figure takes two arguments, the allocator (used to store the plot and genera
 | `plot_padding` | `f32` | The padding around the plot |
 | `background_color` | `RGB (u48)` | The background color of the plot |
 | `background_opacity` | `f32` | The opacity of the background |
+| `title` | `?...` | The style of the title (null to hide it) |
 | `value_padding` | `...` | The padding to use for the range of the plot |
 | `axis` | `...` | The style for the axis |
 | `legend` | `...` | The style for the legend |
+
+The `title` option contains the following parameters:
+| Option | Type | Description |
+| --- | --- | --- |
+| `text` | `[]const u8` | The title of the figure |
+| `position` | `enum { top, bottom }` | The position of the title |
+| `font_size` | `f32` | The font size of the title |
+| `color` | `RGB (u48)` | The color of the title |
+| `padding` | `f32` | The padding between the plot and the title |
 
 The `value_padding` option is defined like so:
 ```zig
@@ -357,7 +367,6 @@ The `Plot` object, contains the following fields:
 You can look at the implementation of the `Line`, `Scatter`, `Area`, `Step` or `Stem` plots for examples.
 
 ## Roadmap
-- Ability to set the title of a plot
 - Ability to set the title of the axis
 - Ability to add arrows at the end of axis
 - More plot types
@@ -365,3 +374,6 @@ You can look at the implementation of the `Line`, `Scatter`, `Area`, `Step` or `
     - Histogram
     - Logarithmic
 - Spline shape for line plot
+
+### Known issue(s)
+- Imperfect text width calculation for the legend (only when the legend is positioned on the right)

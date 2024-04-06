@@ -51,6 +51,22 @@ pub const Style = struct {
     background_color: RGB = rgb.WHITE,
     /// The opacity of the background
     background_opacity: f32 = 1.0,
+    /// The style of the title (null to hide the title)
+    title: ?struct {
+        /// The title of the figure
+        text: []const u8,
+        /// The position of the title
+        position: enum {
+            top,
+            bottom,
+        } = .top,
+        /// The font size of the title
+        font_size: f32 = 20.0,
+        /// The color of the title
+        color: RGB = rgb.BLACK,
+        /// The padding between the title and the plot
+        padding: f32 = 8.0,
+    } = null,
     /// The padding of the ranges
     value_padding: struct {
         x_max: ValuePercent = .{ .percent = 0.0 },
@@ -140,7 +156,7 @@ style: Style,
 
 /// Initialize the figure with the given allocator
 pub fn init(allocator: Allocator, style: Style) Figure {
-    return Figure {
+    return Figure{
         .allocator = allocator,
         .arena = std.heap.ArenaAllocator.init(allocator),
         .plots = std.ArrayList(Plot).init(allocator),
@@ -154,15 +170,13 @@ pub fn deinit(self: *const Figure) void {
     self.plots.deinit();
 }
 
-/// Add a plot to the figure, the given `plot` should be of type `Plot` or have the interface method that returns a 
+/// Add a plot to the figure, the given `plot` should be of type `Plot` or have the interface method that returns a
 /// `Plot`.
 pub fn addPlot(self: *Figure, plot: anytype) !void {
     if (@TypeOf(plot) == Plot) {
         try self.plots.append(plot);
     } else {
-        intf.ensureImplement(struct {
-            interface: fn(*const anyopaque) Plot
-        }, @TypeOf(plot));
+        intf.ensureImplement(struct { interface: fn (*const anyopaque) Plot }, @TypeOf(plot));
 
         const mem = try self.arena.allocator().create(@TypeOf(plot));
         mem.* = plot;
@@ -176,7 +190,7 @@ fn getRangeX(self: *const Figure) Range(f32) {
     var range_x = Range(f32).init(std.math.inf(f32), -std.math.inf(f32));
     for (self.plots.items) |plot| {
         const plot_range_x = plot.getRangeX();
-        
+
         range_x.min = @min(range_x.min, plot_range_x.min);
         range_x.max = @max(range_x.max, plot_range_x.max);
     }
@@ -190,7 +204,7 @@ fn getRangeY(self: *const Figure) Range(f32) {
     var range_y = Range(f32).init(std.math.inf(f32), -std.math.inf(f32));
     for (self.plots.items) |plot| {
         const plot_range_y = plot.getRangeY();
-        
+
         range_y.min = @min(range_y.min, plot_range_y.min);
         range_y.max = @max(range_y.max, plot_range_y.max);
     }
@@ -234,29 +248,29 @@ fn getSectionWidth(info: FigureInfo) struct { pos: f32, neg: f32 } {
 
 /// Compute the gap between the ticks on the x-axis
 fn computeXTickGap(self: *const Figure, info: FigureInfo) f32 {
-    return switch(self.style.axis.tick_count_x) {
+    return switch (self.style.axis.tick_count_x) {
         .count => |count| blk: {
             const sections = getSectionHeight(info);
             break :blk @max(sections.pos, sections.neg) / @as(f32, @floatFromInt(count + 1));
         },
-        .gap => |gap| gap
+        .gap => |gap| gap,
     };
 }
 
 /// Compute the gap between the ticks on the y-axis
 fn computeYTickGap(self: *const Figure, info: FigureInfo) f32 {
-    return switch(self.style.axis.tick_count_y) {
+    return switch (self.style.axis.tick_count_y) {
         .count => |count| blk: {
             const sections = getSectionWidth(info);
             break :blk @max(sections.pos, sections.neg) / @as(f32, @floatFromInt(count + 1));
         },
-        .gap => |gap| gap
+        .gap => |gap| gap,
     };
 }
 
 /// Compute the number of ticks on the x-axis
 fn computeXTickCount(self: *const Figure, info: FigureInfo, gap: f32) struct { pos: usize, neg: usize } {
-    return switch(self.style.axis.tick_count_x) {
+    return switch (self.style.axis.tick_count_x) {
         .count => |count| blk: {
             const sections = getSectionHeight(info);
             break :blk .{
@@ -276,7 +290,7 @@ fn computeXTickCount(self: *const Figure, info: FigureInfo, gap: f32) struct { p
 
 /// Compute the number of ticks on the y-axis
 fn computeYTickCount(self: *const Figure, info: FigureInfo, gap: f32) struct { pos: usize, neg: usize } {
-    return switch(self.style.axis.tick_count_x) {
+    return switch (self.style.axis.tick_count_x) {
         .count => |count| blk: {
             const sections = getSectionWidth(info);
             break :blk .{
@@ -309,18 +323,16 @@ fn applyPaddingToRange(range: Range(f32), min: ValuePercent, max: ValuePercent) 
 
 /// Get the information of the figure
 fn getInfo(self: *const Figure) FigureInfo {
-    const x_range = 
-        if (self.style.axis.x_range) |x_range| x_range 
-        else applyPaddingToRange(self.getRangeX(), self.style.value_padding.x_min, self.style.value_padding.x_max);
-    
-    const y_range = 
-        if (self.style.axis.y_range) |y_range| y_range
-        else applyPaddingToRange(self.getRangeY(), self.style.value_padding.y_min, self.style.value_padding.y_max);
+    const x_range =
+        if (self.style.axis.x_range) |x_range| x_range else applyPaddingToRange(self.getRangeX(), self.style.value_padding.x_min, self.style.value_padding.x_max);
+
+    const y_range =
+        if (self.style.axis.y_range) |y_range| y_range else applyPaddingToRange(self.getRangeY(), self.style.value_padding.y_min, self.style.value_padding.y_max);
 
     const width = self.computePlotWidth(x_range);
     const height = self.computePlotHeight(y_range);
 
-    return FigureInfo {
+    return FigureInfo{
         .x_range = x_range,
         .y_range = y_range,
         .width = width,
@@ -457,7 +469,7 @@ fn drawYLabels(self: *Figure, svg: *SVG, info: FigureInfo) !void {
         const y_value = info.computeYInv(y);
 
         var buffer = std.ArrayList(u8).init(self.arena.allocator());
-        try buffer.writer().print("{d:.2}", .{ y_value });
+        try buffer.writer().print("{d:.2}", .{y_value});
 
         try svg.addText(.{
             .x = .{ .pixel = -self.style.axis.label_padding },
@@ -478,7 +490,7 @@ fn drawYLabels(self: *Figure, svg: *SVG, info: FigureInfo) !void {
         const y_value = info.computeYInv(y);
 
         var buffer = std.ArrayList(u8).init(self.arena.allocator());
-        try buffer.writer().print("{d:.2}", .{ y_value });
+        try buffer.writer().print("{d:.2}", .{y_value});
 
         try svg.addText(.{
             .x = .{ .pixel = -self.style.axis.label_padding },
@@ -507,7 +519,7 @@ fn drawXLabels(self: *Figure, svg: *SVG, info: FigureInfo) !void {
         const x_value = info.computeXInv(x);
 
         var buffer = std.ArrayList(u8).init(self.arena.allocator());
-        try buffer.writer().print("{d:.2}", .{ x_value });
+        try buffer.writer().print("{d:.2}", .{x_value});
 
         try svg.addText(.{
             .x = .{ .pixel = x },
@@ -528,7 +540,7 @@ fn drawXLabels(self: *Figure, svg: *SVG, info: FigureInfo) !void {
         const x_value = info.computeXInv(x);
 
         var buffer = std.ArrayList(u8).init(self.arena.allocator());
-        try buffer.writer().print("{d:.2}", .{ x_value });
+        try buffer.writer().print("{d:.2}", .{x_value});
 
         try svg.addText(.{
             .x = .{ .pixel = x },
@@ -555,11 +567,10 @@ fn drawLegend(self: *Figure, svg: *SVG, info: FigureInfo) !void {
 
     if (plot_count == 0) return;
 
-
     // FIXME: Not ideal
     const width = @as(f32, @floatFromInt(longuest_title)) * self.style.legend.font_size / 1.5 + 2 * self.style.legend.font_size;
     const height = @as(f32, @floatFromInt(plot_count)) * (self.style.legend.font_size * 1.5 + 2.0) + self.style.legend.font_size / 2.0;
-    
+
     const x, const y = switch (self.style.legend.position) {
         .top_left => .{ self.style.legend.padding, self.style.legend.padding },
         .top_right => .{ info.width - self.style.legend.padding - width, self.style.legend.padding },
@@ -601,7 +612,35 @@ fn drawLegend(self: *Figure, svg: *SVG, info: FigureInfo) !void {
             if (i == plot_count) break;
         }
     }
-} 
+}
+
+fn drawTitle(self: *Figure, svg: *SVG, info: FigureInfo) !void {
+    if (self.style.title) |title| {
+        if (title.position == .top) {
+            const min = title.font_size + title.padding;
+            if (self.style.plot_padding < min) {
+                std.log.warn("Low padding around the plot, the title might be cropped! (expected > {d})", .{min});
+            }
+        } else {
+            const min = title.font_size + title.padding + self.style.axis.label_padding + self.style.axis.label_size;
+            if (self.style.plot_padding < min) {
+                std.log.warn("Low padding around the plot, the title might be cropped! (expected > {d})", .{min});
+            }
+        }
+
+        try svg.addText(.{
+            .x = .{ .pixel = (svg.viewbox.width) / 2.0 + svg.viewbox.x },
+            .y = .{ .pixel = if (title.position == .top) -title.padding else info.height + self.style.axis.label_padding + self.style.axis.label_size + title.padding },
+            .text_anchor = .middle,
+            .dominant_baseline = if (title.position == .top) .text_after_edge else .text_before_edge,
+            .font_family = self.style.axis.label_font,
+            .font_size = .{ .pixel = title.font_size },
+            .font_weight = .bold,
+            .fill = title.color,
+            .text = title.text,
+        });
+    }
+}
 
 /// Draw the figure on an SVG File.
 pub fn show(self: *Figure) !SVG {
@@ -609,15 +648,10 @@ pub fn show(self: *Figure) !SVG {
 
     const info = self.getInfo();
 
-    var svg = SVG.init(
-        self.allocator, 
-        info.width + 2 * self.style.plot_padding,
-        info.height + 2 * self.style.plot_padding
-    );
+    var svg = SVG.init(self.allocator, info.width + 2 * self.style.plot_padding, info.height + 2 * self.style.plot_padding);
 
     svg.viewbox.x = -self.style.plot_padding;
     svg.viewbox.y = -self.style.plot_padding;
-
     // Draw the background
     try svg.addRect(.{
         .x = .{ .pixel = svg.viewbox.x },
@@ -627,6 +661,9 @@ pub fn show(self: *Figure) !SVG {
         .fill = self.style.background_color,
         .opacity = self.style.background_opacity,
     });
+
+    // Draw the title
+    try self.drawTitle(&svg, info);
 
     // Draw the grid
     if (self.style.axis.show_grid_x) try self.drawXGrid(&svg, info);

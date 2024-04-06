@@ -37,7 +37,7 @@ pub fn main() !void {
     var gpa = std.heap.GeneralPurposeAllocator(.{}){};
     defer _ = gpa.deinit();
     const allocator = gpa.allocator();
-    
+
     var points: [25]f32 = undefined;
     var points2: [25]f32 = undefined;
     var points3: [25]f32 = undefined;
@@ -47,42 +47,29 @@ pub fn main() !void {
         points3[i] = f3(@floatFromInt(i));
     }
 
-    var figure = Figure.init(allocator, .{});
+    var figure = Figure.init(allocator, .{
+        .title = .{
+            .text = "Example plot",
+        },
+    });
     defer figure.deinit();
 
-    try figure.addPlot(Area {
-        .y = &points,
-        .style = .{
-            .color = 0x0000FF,
-        }
-    });
-    try figure.addPlot(Scatter {
-        .y = &points2,
-        .style = .{
-            .shape = .plus,
-            .color = 0xFF0000,
-        }
-    });
-    try figure.addPlot(Line {
-        .y = &points3,
-        .style = .{
-            .color = 0x00FF00,
-        }
-    });
-    try figure.addPlot(Area {
-        .x = &[_]f32 { -5.0, 0.0, 5.0 },
-        .y = &[_]f32 { 5.0, 3.0, 5.0 },
-        .style = .{
-            .color = 0xFF00FF,
-        }
-    });
-    try figure.addPlot(Area {
-        .x = &[_]f32 { -5.0, 0.0, 5.0 },
-        .y = &[_]f32 { -5.0, -3.0, -5.0 },
-        .style = .{
-            .color = 0xFFFF00,
-        }
-    });
+    try figure.addPlot(Area{ .y = &points, .style = .{
+        .color = 0x0000FF,
+    } });
+    try figure.addPlot(Scatter{ .y = &points2, .style = .{
+        .shape = .plus,
+        .color = 0xFF0000,
+    } });
+    try figure.addPlot(Line{ .y = &points3, .style = .{
+        .color = 0x00FF00,
+    } });
+    try figure.addPlot(Area{ .x = &[_]f32{ -5.0, 0.0, 5.0 }, .y = &[_]f32{ 5.0, 3.0, 5.0 }, .style = .{
+        .color = 0xFF00FF,
+    } });
+    try figure.addPlot(Area{ .x = &[_]f32{ -5.0, 0.0, 5.0 }, .y = &[_]f32{ -5.0, -3.0, -5.0 }, .style = .{
+        .color = 0xFFFF00,
+    } });
 
     var svg = try figure.show();
     defer svg.deinit();

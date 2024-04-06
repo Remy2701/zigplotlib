@@ -101,7 +101,11 @@ pub fn main() !void {
         points3[i] = f3(@floatFromInt(i));
     }
 
-    var figure = Figure.init(allocator, .{});
+    var figure = Figure.init(allocator, .{
+        .title = .{
+            .text = "Example plot",
+        },
+    });
     defer figure.deinit();
 
     try figure.addPlot(Area {

@@ -267,7 +267,7 @@ figure.addPlot(Line {
 
 ## Supported Plots
 
-There are currently 3 types of plots supported:
+There are currently 5 types of plots supported:
 
 ### Line
 

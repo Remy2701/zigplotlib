@@ -213,6 +213,8 @@ The `axis` option contains more parameters:
 
 | Option | Type | Description |
 | --- | --- | --- |
+| `x_scale` | `enum { linear, log }` | The scale of the x axis |
+| `y_scale` | `enum { linear, log }` | The scale of the y axis |
 | `x_range` | `?Range(f32)` | The range of values for the x axis |
 | `y_range` | `?Range(f32)` | The range of values for the y axis |
 | `color` | `RGB (u48)` | The color of the axis |
@@ -376,8 +378,8 @@ You can look at the implementation of the `Line`, `Scatter`, `Area`, `Step` or `
 - More plot types
     - Bar
     - Histogram
-    - Logarithmic
 - Spline shape for line plot
+- Linear Interpolation with the figure border
 
 ### Known issue(s)
 - Imperfect text width calculation for the legend (only when the legend is positioned on the right)

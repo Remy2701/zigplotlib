@@ -3,6 +3,7 @@ const Allocator = std.mem.Allocator;
 
 const SVG = @import("../svg/SVG.zig");
 const Range = @import("../util/range.zig").Range;
+const Scale = @import("../util/scale.zig").Scale;
 
 const rgb = @import("../svg/util/rgb.zig");
 const RGB = rgb.RGB;
@@ -76,6 +77,10 @@ pub const Style = struct {
     } = .{},
     /// The style of the axis
     axis: struct {
+        /// The scale on the x-axis
+        x_scale: Scale = .linear,
+        /// The scale on the y-axis
+        y_scale: Scale = .linear,
         /// The range of values on the x_axis
         x_range: ?Range(f32) = null,
         /// The range of values on the y_axis
@@ -308,6 +313,7 @@ fn computeYTickCount(self: *const Figure, info: FigureInfo, gap: f32) struct { p
     };
 }
 
+/// Apply padding to the given range.
 fn applyPaddingToRange(range: Range(f32), min: ValuePercent, max: ValuePercent) Range(f32) {
     return Range(f32).init(
         switch (min) {
@@ -337,6 +343,8 @@ fn getInfo(self: *const Figure) FigureInfo {
         .y_range = y_range,
         .width = width,
         .height = height,
+        .x_scale = self.style.axis.x_scale,
+        .y_scale = self.style.axis.y_scale,
     };
 }
 
@@ -355,8 +363,8 @@ fn drawXAxis(self: *Figure, svg: *SVG, info: FigureInfo) !void {
     });
 }
 
-/// Draw the grid on the y axis of the figure
-fn drawYGrid(self: *Figure, svg: *SVG, info: FigureInfo) !void {
+/// Draw the y-grid on a linear scale
+fn drawYGridLinear(self: *Figure, svg: *SVG, info: FigureInfo) !void {
     const gap = self.computeXTickGap(info);
     const counts = self.computeXTickCount(info, gap);
 
@@ -388,6 +396,39 @@ fn drawYGrid(self: *Figure, svg: *SVG, info: FigureInfo) !void {
             .stroke_width = .{ .pixel = self.style.axis.width },
             .opacity = self.style.axis.grid_opacity,
         });
+    }
+}
+
+/// Draw the y-grid on a logarithmic scale
+fn drawYGridLog(self: *Figure, svg: *SVG, info: FigureInfo) !void {
+    if (std.math.sign(info.y_range.min) == -1 or std.math.sign(info.y_range.max) == -1) {
+        std.log.err("Cannot draw a log scale with negative values", .{});
+        return error.InvalidRange;
+    }
+
+    const min: f32 = @ceil(@log10(info.y_range.min));
+    const max: f32 = @floor(@log10(info.y_range.max));
+
+    var i: f32 = min;
+    while (i <= max) : (i += 1) {
+        const y = info.computeY(std.math.pow(f32, 10, i));
+        try svg.addLine(.{
+            .x1 = .{ .pixel = 0.0 },
+            .y1 = .{ .pixel = y },
+            .x2 = .{ .pixel = info.width },
+            .y2 = .{ .pixel = y },
+            .stroke = self.style.axis.color,
+            .stroke_width = .{ .pixel = self.style.axis.width },
+            .opacity = self.style.axis.grid_opacity,
+        });
+    }
+}
+
+/// Draw the grid on the y axis of the figure
+fn drawYGrid(self: *Figure, svg: *SVG, info: FigureInfo) !void {
+    switch (info.y_scale) {
+        .linear => try self.drawYGridLinear(svg, info),
+        .log => try self.drawYGridLog(svg, info),
     }
 }
 
@@ -406,8 +447,8 @@ fn drawYAxis(self: *Figure, svg: *SVG, info: FigureInfo) !void {
     });
 }
 
-/// Draw the grid on the x axis of the figure
-fn drawXGrid(self: *Figure, svg: *SVG, info: FigureInfo) !void {
+/// Draw the x-grid on a linear scale
+fn drawXGridLinear(self: *Figure, svg: *SVG, info: FigureInfo) !void {
     const gap = self.computeYTickGap(info);
     const counts = self.computeYTickCount(info, gap);
 
@@ -442,6 +483,39 @@ fn drawXGrid(self: *Figure, svg: *SVG, info: FigureInfo) !void {
     }
 }
 
+/// Draw the x-grid on a logarithmic scale
+fn drawXGridLog(self: *Figure, svg: *SVG, info: FigureInfo) !void {
+    if (std.math.sign(info.x_range.min) == -1 or std.math.sign(info.x_range.max) == -1) {
+        std.log.err("Cannot draw a log scale with negative values", .{});
+        return error.InvalidRange;
+    }
+
+    const min: f32 = @ceil(@log10(info.x_range.min));
+    const max: f32 = @floor(@log10(info.x_range.max));
+
+    var i: f32 = min;
+    while (i <= max) : (i += 1) {
+        const x = info.computeX(std.math.pow(f32, 10, i));
+        try svg.addLine(.{
+            .x1 = .{ .pixel = x },
+            .y1 = .{ .pixel = 0.0 },
+            .x2 = .{ .pixel = x },
+            .y2 = .{ .pixel = info.height },
+            .stroke = self.style.axis.color,
+            .stroke_width = .{ .pixel = self.style.axis.width },
+            .opacity = self.style.axis.grid_opacity,
+        });
+    }
+}
+
+/// Draw the grid on the x axis of the figure
+fn drawXGrid(self: *Figure, svg: *SVG, info: FigureInfo) !void {
+    switch (info.x_scale) {
+        .linear => try self.drawXGridLinear(svg, info),
+        .log => try self.drawXGridLog(svg, info),
+    }
+}
+
 /// Draw the border of the figure (frame)
 fn drawBorder(self: *Figure, svg: *SVG, info: FigureInfo) !void {
     try svg.addRect(.{
@@ -455,8 +529,8 @@ fn drawBorder(self: *Figure, svg: *SVG, info: FigureInfo) !void {
     });
 }
 
-/// Draw the labels on the y axis of the figure
-fn drawYLabels(self: *Figure, svg: *SVG, info: FigureInfo) !void {
+/// Draw the labels on the y axis on a linear scale
+fn drawYLabelsLinear(self: *Figure, svg: *SVG, info: FigureInfo) !void {
     const gap = self.computeXTickGap(info);
     const counts = self.computeXTickCount(info, gap);
 
@@ -505,8 +579,48 @@ fn drawYLabels(self: *Figure, svg: *SVG, info: FigureInfo) !void {
     }
 }
 
-/// Draw the labels on the x axis of the figure
-fn drawXLabels(self: *Figure, svg: *SVG, info: FigureInfo) !void {
+/// Draw the labels on the y axis on a logarithmic scale
+fn drawYLabelsLog(self: *Figure, svg: *SVG, info: FigureInfo) !void {
+    if (std.math.sign(info.y_range.min) == -1 or std.math.sign(info.y_range.max) == -1) {
+        std.log.err("Cannot draw a log scale with negative values", .{});
+        return error.InvalidRange;
+    }
+
+    const min: f32 = @ceil(@log10(info.y_range.min));
+    const max: f32 = @floor(@log10(info.y_range.max));
+
+    var i: f32 = min;
+    while (i <= max) : (i += 1) {
+        const y = info.computeY(std.math.pow(f32, 10, i));
+
+        const y_value = std.math.pow(f32, 10, i);
+
+        var buffer = std.ArrayList(u8).init(self.arena.allocator());
+        try buffer.writer().print("{d:.2}", .{y_value});
+
+        try svg.addText(.{
+            .x = .{ .pixel = -self.style.axis.label_padding },
+            .y = .{ .pixel = y },
+            .text_anchor = .end,
+            .dominant_baseline = .middle,
+            .font_family = self.style.axis.label_font,
+            .font_size = .{ .pixel = self.style.axis.label_size },
+            .fill = self.style.axis.label_color,
+            .text = try buffer.toOwnedSlice(),
+        });
+    }
+}
+
+/// Draw the labels on the y axis of the figure
+fn drawYLabels(self: *Figure, svg: *SVG, info: FigureInfo) !void {
+    switch (info.y_scale) {
+        .linear => try self.drawYLabelsLinear(svg, info),
+        .log => try self.drawYLabelsLog(svg, info),
+    }
+}
+
+/// Draw the labels on the x axis on a linear scale
+fn drawXLabelsLinear(self: *Figure, svg: *SVG, info: FigureInfo) !void {
     const gap = self.computeYTickGap(info);
     const counts = self.computeYTickCount(info, gap);
 
@@ -552,6 +666,46 @@ fn drawXLabels(self: *Figure, svg: *SVG, info: FigureInfo) !void {
             .fill = self.style.axis.label_color,
             .text = try buffer.toOwnedSlice(),
         });
+    }
+}
+
+/// Draw the labels on the x axis on a logarithmic scale
+fn drawXLabelsLog(self: *Figure, svg: *SVG, info: FigureInfo) !void {
+    if (std.math.sign(info.x_range.min) == -1 or std.math.sign(info.x_range.max) == -1) {
+        std.log.err("Cannot draw a log scale with negative values", .{});
+        return error.InvalidRange;
+    }
+
+    const min: f32 = @ceil(@log10(info.x_range.min));
+    const max: f32 = @floor(@log10(info.x_range.max));
+
+    var i: f32 = min;
+    while (i <= max) : (i += 1) {
+        const x = info.computeX(std.math.pow(f32, 10, i));
+
+        const x_value = std.math.pow(f32, 10, i);
+
+        var buffer = std.ArrayList(u8).init(self.arena.allocator());
+        try buffer.writer().print("{d:.2}", .{x_value});
+
+        try svg.addText(.{
+            .x = .{ .pixel = x },
+            .y = .{ .pixel = info.height + self.style.axis.label_padding },
+            .text_anchor = .middle,
+            .dominant_baseline = .hanging,
+            .font_family = self.style.axis.label_font,
+            .font_size = .{ .pixel = self.style.axis.label_size },
+            .fill = self.style.axis.label_color,
+            .text = try buffer.toOwnedSlice(),
+        });
+    }
+}
+
+/// Draw the labels on the x axis of the figure
+fn drawXLabels(self: *Figure, svg: *SVG, info: FigureInfo) !void {
+    switch (info.x_scale) {
+        .linear => try self.drawXLabelsLinear(svg, info),
+        .log => try self.drawXLabelsLog(svg, info),
     }
 }
 
@@ -614,6 +768,7 @@ fn drawLegend(self: *Figure, svg: *SVG, info: FigureInfo) !void {
     }
 }
 
+/// Drwa the title of the figure
 fn drawTitle(self: *Figure, svg: *SVG, info: FigureInfo) !void {
     if (self.style.title) |title| {
         if (title.position == .top) {

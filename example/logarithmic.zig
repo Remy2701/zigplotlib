@@ -25,6 +25,9 @@ pub fn main() !void {
         y3[i] = std.math.log10(x[i]);
     }
 
+    // Used to snap to the grid (will be fixed in later updates).
+    y3[44] = 0.10;
+
     var figure = Figure.init(allocator, .{
         .axis = .{
             .y_scale = .log,
@@ -41,6 +44,7 @@ pub fn main() !void {
         .style = .{
             .color = rgb.RED,
             .width = 2.0,
+            .smooth = 0.2,
         },
     });
 
@@ -50,16 +54,14 @@ pub fn main() !void {
         .style = .{
             .color = rgb.GREEN,
             .width = 2.0,
+            .smooth = 0.2,
         },
     });
 
     try figure.addPlot(Line{
         .x = &x,
         .y = &y3,
-        .style = .{
-            .color = rgb.BLUE,
-            .width = 2.0,
-        },
+        .style = .{ .color = rgb.BLUE, .width = 2.0, .smooth = 0.2 },
     });
 
     var svg = try figure.show();

@@ -6,18 +6,14 @@ pub const Rect = @import("Rect.zig");
 pub const Circle = @import("Circle.zig");
 pub const Polyline = @import("Polyline.zig");
 pub const Text = @import("Text.zig");
+pub const Path = @import("Path.zig");
 
 pub usingnamespace @import("kind.zig");
 
 const SVG = @This();
 
 /// The repsentation of the viewbox of the SVG
-pub const ViewBox = struct {
-    x: f32,
-    y: f32, 
-    width: f32,
-    height: f32
-};
+pub const ViewBox = struct { x: f32, y: f32, width: f32, height: f32 };
 
 /// The allocator used for the SVG
 allocator: Allocator,
@@ -33,18 +29,12 @@ viewbox: ViewBox,
 
 /// Initialize the SVG with the given allocator, width and height
 pub fn init(allocator: Allocator, width: f32, height: f32) SVG {
-    return SVG {
-        .allocator = allocator,
-        .data = SVG.Kind.List.init(allocator),
+    return SVG{ .allocator = allocator, .data = SVG.Kind.List.init(allocator), .width = width, .height = height, .viewbox = ViewBox{
+        .x = 0,
+        .y = 0,
         .width = width,
         .height = height,
-        .viewbox = ViewBox {
-            .x = 0,
-            .y = 0,
-            .width = width,
-            .height = height,
-        }
-    };
+    } };
 }
 
 /// Deintiialize the SVG
@@ -85,19 +75,24 @@ pub fn addText(self: *SVG, options: Text.Options) !void {
     try self.add(Text.init(options).wrap());
 }
 
+/// Add a Path to the SVG
+pub fn addPath(self: *SVG, options: Path.Options) !void {
+    try self.add(Path.init(options).wrap());
+}
+
 /// The header of the SVG
-const SVG_HEADER = 
-\\<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-\\<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-\\<svg width="{d}" height="{d}" viewBox="{d} {d} {d} {d}" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-\\
+const SVG_HEADER =
+    \\<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+    \\<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+    \\<svg width="{d}" height="{d}" viewBox="{d} {d} {d} {d}" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    \\
 ;
 
 /// Write the SVG to the given writer
 pub fn writeTo(self: *const SVG, writer: anytype) anyerror!void {
     // Write the header
     try writer.print(SVG_HEADER, .{
-        self.width, 
+        self.width,
         self.height,
         self.viewbox.x,
         self.viewbox.y,

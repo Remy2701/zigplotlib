@@ -1,3 +1,6 @@
+# Version 0.1.2
+- Added smooth option to line plot
+
 # Version 0.1.1
 - Added the logarithmic example
 - Added the logarithmic scale

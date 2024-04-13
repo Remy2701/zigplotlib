@@ -4,7 +4,7 @@ const Allocator = std.mem.Allocator;
 const Kind = @import("kind.zig").Kind;
 
 const length = @import("util/length.zig");
-const lengthPercent = length.LengthPercent;
+const LengthPercent = length.LengthPercent;
 
 const rgb = @import("util/rgb.zig");
 const RGB = rgb.RGB;
@@ -26,7 +26,7 @@ pub const Options = struct {
     /// The opacity of the stroke
     stroke_opacity: f32 = 1.0,
     /// The width of the stroke
-    stroke_width: lengthPercent = .{ .pixel = 1.0 },
+    stroke_width: LengthPercent = .{ .pixel = 1.0 },
     /// The opacity of the Polyline (fill + stroke)
     opacity: f32 = 1.0,
 };
@@ -36,7 +36,7 @@ options: Options,
 
 /// Intialize the polyline with the given option
 pub fn init(options: Options) Polyline {
-    return Polyline {
+    return Polyline{
         .options = options,
     };
 }
@@ -60,11 +60,9 @@ pub fn writeTo(self: *const Polyline, writer: anytype) anyerror!void {
         }
         try writer.writeAll("\" ");
     } else try writer.writeAll("points=\"\" ");
-    if (self.options.fill) |fill| try writer.print("fill=\"#{X:0>6}\" ", .{fill})
-    else try writer.writeAll("fill=\"none\" ");
+    if (self.options.fill) |fill| try writer.print("fill=\"#{X:0>6}\" ", .{fill}) else try writer.writeAll("fill=\"none\" ");
     try writer.print("fill-opacity=\"{d}\" ", .{self.options.fill_opacity});
-    if (self.options.stroke) |stroke| try writer.print("stroke=\"#{X:0>6}\" ", .{stroke})
-    else try writer.writeAll("stroke=\"none\" ");
+    if (self.options.stroke) |stroke| try writer.print("stroke=\"#{X:0>6}\" ", .{stroke}) else try writer.writeAll("stroke=\"none\" ");
     try writer.print("stroke-opacity=\"{d}\" ", .{self.options.stroke_opacity});
     try writer.print("stroke-width=\"{}\" ", .{self.options.stroke_width});
     try writer.print("opacity=\"{d}\" ", .{self.options.opacity});
@@ -73,7 +71,5 @@ pub fn writeTo(self: *const Polyline, writer: anytype) anyerror!void {
 
 /// Wrap the Polyline in a Kind
 pub fn wrap(self: *const Polyline) Kind {
-    return Kind {
-        .polyline = self.*
-    };
+    return Kind{ .polyline = self.* };
 }

@@ -9,11 +9,13 @@ const Range = zigplotlib.Range;
 const Figure = zigplotlib.Figure;
 const Line = zigplotlib.Line;
 
+const SMOOTHING = 0.2;
+
 pub fn main() !void {
     var gpa = std.heap.GeneralPurposeAllocator(.{}){};
     defer _ = gpa.deinit();
     const allocator = gpa.allocator();
-    
+
     var x: [28]f32 = undefined;
     var y: [28]f32 = undefined;
     var y2: [28]f32 = undefined;
@@ -30,26 +32,20 @@ pub fn main() !void {
         },
         .axis = .{
             .show_y_axis = false,
-        }
+        },
     });
     defer figure.deinit();
-    try figure.addPlot(Line {
-        .x = &x,
-        .y = &y,
-        .style = .{
-            .color = rgb.BLUE,
-            .width = 2.0,
-        }
-    });
-    try figure.addPlot(Line {
-        .x = &x,
-        .y = &y2,
-        .style = .{
-            .color = rgb.GRAY,
-            .width = 2.0,
-            .dash = 4.0,
-        }
-    });
+    try figure.addPlot(Line{ .x = &x, .y = &y, .style = .{
+        .color = rgb.BLUE,
+        .width = 2.0,
+        .smooth = SMOOTHING,
+    } });
+    try figure.addPlot(Line{ .x = &x, .y = &y2, .style = .{
+        .color = rgb.GRAY,
+        .width = 2.0,
+        .dash = 4.0,
+        .smooth = SMOOTHING,
+    } });
     var svg = try figure.show();
     defer svg.deinit();
 

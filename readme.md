@@ -283,6 +283,7 @@ The options for styling the line plot are:
 | `color` | `RGB (u48)` | The color of the line |
 | `width` | `f32` | The width of the line |
 | `dash` | `?f32` | The length of the dash for the line (null means no dash)  |
+| `smooth` | `f32` | The smoothing factor for the line plot. It must be in range [0; 1]. (0 means no smoothing). |
 
 ### Area
 
@@ -378,8 +379,8 @@ You can look at the implementation of the `Line`, `Scatter`, `Area`, `Step` or `
 - More plot types
     - Bar
     - Histogram
-- Spline shape for line plot
 - Linear Interpolation with the figure border
+- Labels & Markers on Figure
 
 ### Known issue(s)
 - Imperfect text width calculation for the legend (only when the legend is positioned on the right)

@@ -33,7 +33,7 @@ pub fn getDy(self: *const FigureInfo) f32 {
 }
 
 /// Convert a value in the linear range into the log10 range.
-fn linearToLog10(min: f32, max: f32, x: f32) f32 {
+pub fn linearToLog10(min: f32, max: f32, x: f32) f32 {
     return (@log10(x) - @log10(min)) / (@log10(max) - @log10(min)) * (max - min);
 }
 

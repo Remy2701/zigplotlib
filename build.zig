@@ -8,7 +8,7 @@ fn addStartPoint(
     description: []const u8,
     path: []const u8,
     module: *std.Build.Module,
-) void {
+) *std.Build.Step {
     const exe = b.addExecutable(.{
         .name = name,
         .root_source_file = .{ .path = path },
@@ -45,6 +45,8 @@ fn addStartPoint(
     // This will evaluate the `run` step rather than the default, which is "install".
     const run_step = b.step(name, description);
     run_step.dependOn(&run_cmd.step);
+
+    return run_step;
 }
 
 // Although this function looks imperative, note that its job is to
@@ -78,13 +80,22 @@ pub fn build(b: *std.Build) void {
     // running `zig build`).
     b.installArtifact(lib);
 
-    addStartPoint(b, target, optimize, "run", "Run the App", "src/main.zig", lib_module);
-    addStartPoint(b, target, optimize, "step-example", "Run the Step example", "example/step.zig", lib_module);
-    addStartPoint(b, target, optimize, "stem-example", "Run the Stem example", "example/stem.zig", lib_module);
-    addStartPoint(b, target, optimize, "scatter-example", "Run the Scatter example", "example/scatter.zig", lib_module);
-    addStartPoint(b, target, optimize, "line-example", "Run the Line example", "example/line.zig", lib_module);
-    addStartPoint(b, target, optimize, "area-example", "Run the Area example", "example/area.zig", lib_module);
-    addStartPoint(b, target, optimize, "log-example", "Run the Logarithmic example", "example/logarithmic.zig", lib_module);
+    const run_step = addStartPoint(b, target, optimize, "run", "Run the App", "src/main.zig", lib_module);
+    const step_step = addStartPoint(b, target, optimize, "step-example", "Run the Step example", "example/step.zig", lib_module);
+    const stem_step = addStartPoint(b, target, optimize, "stem-example", "Run the Stem example", "example/stem.zig", lib_module);
+    const scatter_step = addStartPoint(b, target, optimize, "scatter-example", "Run the Scatter example", "example/scatter.zig", lib_module);
+    const line_step = addStartPoint(b, target, optimize, "line-example", "Run the Line example", "example/line.zig", lib_module);
+    const area_step = addStartPoint(b, target, optimize, "area-example", "Run the Area example", "example/area.zig", lib_module);
+    const log_step = addStartPoint(b, target, optimize, "log-example", "Run the Logarithmic example", "example/logarithmic.zig", lib_module);
+
+    const all_step = b.step("all", "Run all the examples");
+    all_step.dependOn(run_step);
+    all_step.dependOn(step_step);
+    all_step.dependOn(stem_step);
+    all_step.dependOn(scatter_step);
+    all_step.dependOn(line_step);
+    all_step.dependOn(area_step);
+    all_step.dependOn(log_step);
 
     // Creates a step for unit testing. This only builds the test executable
     // but does not run it.

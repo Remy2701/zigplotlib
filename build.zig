@@ -10,7 +10,7 @@ fn addStartPoint(
     module: *std.Build.Module,
 ) void {
     const exe = b.addExecutable(.{
-        .name = "zigplotlib",
+        .name = name,
         .root_source_file = .{ .path = path },
         .target = target,
         .optimize = optimize,
@@ -71,9 +71,7 @@ pub fn build(b: *std.Build) void {
         .optimize = optimize,
     });
 
-    const lib_module = b.addModule("zigplotlib", .{
-        .root_source_file = .{ .path = "src/root.zig" },
-    });
+    const lib_module = &lib.root_module;
 
     // This declares intent for the library to be installed into the standard
     // location when the user invokes the "install" step (the default step when

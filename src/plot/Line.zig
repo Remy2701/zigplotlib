@@ -45,7 +45,7 @@ fn getXRange(impl: *const anyopaque) Range(f32) {
     } else {
         return Range(f32){
             .min = 0.0,
-            .max = @floatFromInt(self.y.len - 1),
+            .max = if (self.y.len == 0) 0 else @floatFromInt(self.y.len - 1),
         };
     }
 }

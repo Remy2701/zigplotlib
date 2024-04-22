@@ -3,7 +3,7 @@ The Zig Plot Lib is a library for plotting data in Zig. It is designed to be eas
 
 **Note:** This library is still in development and is not yet ready for production use.
 
-I'm developping this library with version 0.12.0-dev.1768+39a966b0a.
+I'm developping this library with version 0.12.0.
 
 ## Installation
 You can install the library by adding it to the `build.zig.zon` file, either manually like so:
@@ -222,7 +222,6 @@ The `axis` option contains more parameters:
 | `label_color` | `RGB (u48)` | The color of the labels |
 | `label_size` | `f32` | The font size of the labels |
 | `label_padding` | `f32` | The padding between the labels and the axis | 
-| `label_padding` | `f32` | The padding between the labels and the axis |
 | `label_font` | `[]const u8` | The font to use for the labels |
 | `tick_count_x` | `...` | The number of ticks to use on the x axis |
 | `tick_count_y` | `...` | The number of ticks to use on the y axis |
@@ -381,6 +380,7 @@ You can look at the implementation of the `Line`, `Scatter`, `Area`, `Step` or `
     - Histogram
 - Linear Interpolation with the figure border
 - Labels & Markers on Figure
+- Theme
 
 ### Known issue(s)
 - Imperfect text width calculation for the legend (only when the legend is positioned on the right)

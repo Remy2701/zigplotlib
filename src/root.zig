@@ -24,4 +24,5 @@ pub const RGB = rgb.RGB;
 
 test "Plot Test" {
     std.testing.refAllDecls(FigureInfo);
+    std.testing.refAllDecls(Figure);
 }

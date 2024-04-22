@@ -8,12 +8,28 @@ const Scale = @import("../util/scale.zig").Scale;
 const rgb = @import("../svg/util/rgb.zig");
 const RGB = rgb.RGB;
 
+const units = @import("../util/units.zig");
+const PixelAutoGap = units.PixelAutoGap;
+const ValuePercent = units.ValuePercent;
+const ValuePadding = units.ValuePadding;
+const CornerPosition = units.CornerPosition;
+const CountGap = units.CountGap;
+
 const Plot = @import("Plot.zig");
 const FigureInfo = @import("FigureInfo.zig");
 
 const intf = @import("../core/intf.zig");
 
 const Figure = @This();
+
+const GhostLogger = @import("../util/log.zig").GhostLogger;
+
+pub const logger = if (@import("builtin").is_test) GhostLogger else std.log.scoped(.Zigplotlib);
+
+pub const Error = error{
+    NoPlots,
+    NegativeLogScale,
+};
 
 /// The Default Values used for the figure
 const Default = struct {
@@ -23,29 +39,12 @@ const Default = struct {
     const height: f32 = 512;
 };
 
-pub const ValuePercent = union(enum) {
-    /// The value
-    value: f32,
-    /// The percent (0.1 => 10%, 1.0 => 100%)
-    percent: f32,
-};
-
 /// The style of the figure
 pub const Style = struct {
     /// The width of the figure (excluding the axis a label)
-    width: union(enum) {
-        /// Width in px.
-        pixel: f32,
-        /// Width computed from the given gap
-        auto_gap: f32,
-    } = .{ .pixel = Default.width },
+    width: PixelAutoGap = .{ .pixel = Default.width },
     /// The height of the figure (excluding the axis a label)
-    height: union(enum) {
-        /// Width in px.
-        pixel: f32,
-        /// Width computed from the given gap
-        auto_gap: f32,
-    } = .{ .pixel = Default.height },
+    height: PixelAutoGap = .{ .pixel = Default.height },
     /// The size used for the axis and labels
     plot_padding: f32 = Default.plot_padding,
     /// The color of the background
@@ -69,12 +68,7 @@ pub const Style = struct {
         padding: f32 = 8.0,
     } = null,
     /// The padding of the ranges
-    value_padding: struct {
-        x_max: ValuePercent = .{ .percent = 0.0 },
-        y_max: ValuePercent = .{ .percent = 0.1 },
-        x_min: ValuePercent = .{ .percent = 0.0 },
-        y_min: ValuePercent = .{ .percent = 0.1 },
-    } = .{},
+    value_padding: ValuePadding = .{},
     /// The style of the axis
     axis: struct {
         /// The scale on the x-axis
@@ -98,19 +92,9 @@ pub const Style = struct {
         /// The font of the labels
         label_font: []const u8 = "sans-serif",
         /// The number of ticks on the x-axis
-        tick_count_x: union(enum) {
-            /// The number of ticks
-            count: usize,
-            /// The gap between the ticks
-            gap: f32,
-        } = .{ .count = 5.0 },
+        tick_count_x: CountGap = .{ .count = 5.0 },
         /// The number of ticks on the y-axis
-        tick_count_y: union(enum) {
-            /// The number of ticks
-            count: usize,
-            /// The gap between the ticks
-            gap: f32,
-        } = .{ .count = 5.0 },
+        tick_count_y: CountGap = .{ .count = 5.0 },
         /// Whether to show the x-axis
         show_x_axis: bool = true,
         /// Whether to show the y-axis
@@ -126,17 +110,12 @@ pub const Style = struct {
         /// The width of the frame
         frame_width: f32 = 4.0,
     } = .{},
-    /// The style the legend
+    /// The style of the legend
     legend: struct {
         /// Whether to show the legend
         show: bool = true,
         /// The position of the legend
-        position: union(enum) {
-            top_left,
-            top_right,
-            bottom_left,
-            bottom_right,
-        } = .bottom_right,
+        position: CornerPosition = .bottom_right,
         /// The font size to use for the lengend
         font_size: f32 = 10.0,
         /// The color of the background
@@ -191,8 +170,7 @@ pub fn addPlot(self: *Figure, plot: anytype) !void {
 
 /// Get the x-range of the plot
 fn getRangeX(self: *const Figure) Range(f32) {
-    // Initialize the range to ]∞;-∞[
-    var range_x = Range(f32).init(std.math.inf(f32), -std.math.inf(f32));
+    var range_x = Range(f32).invInf();
     for (self.plots.items) |plot| {
         const plot_range_x = plot.getRangeX();
 
@@ -205,8 +183,7 @@ fn getRangeX(self: *const Figure) Range(f32) {
 
 /// Get the y-range of the plot
 fn getRangeY(self: *const Figure) Range(f32) {
-    // Initialize the range to ]∞;-∞[
-    var range_y = Range(f32).init(std.math.inf(f32), -std.math.inf(f32));
+    var range_y = Range(f32).invInf();
     for (self.plots.items) |plot| {
         const plot_range_y = plot.getRangeY();
 
@@ -219,18 +196,18 @@ fn getRangeY(self: *const Figure) Range(f32) {
 
 /// Compute the width of the plot (excluding the axis and labels)
 fn computePlotWidth(self: *const Figure, x_range: Range(f32)) f32 {
-    switch (self.style.width) {
-        .pixel => |pixel| return pixel,
-        .auto_gap => |gap| return gap * (x_range.max - x_range.min),
-    }
+    return switch (self.style.width) {
+        .pixel => |pixel| pixel,
+        .auto_gap => |gap| gap * (x_range.max - x_range.min),
+    };
 }
 
 /// Compute the height of the plot (excluding the axis and labels)
 fn computePlotHeight(self: *const Figure, y_range: Range(f32)) f32 {
-    switch (self.style.height) {
-        .pixel => |pixel| return pixel,
-        .auto_gap => |gap| return gap * (y_range.max - y_range.min),
-    }
+    return switch (self.style.height) {
+        .pixel => |pixel| pixel,
+        .auto_gap => |gap| gap * (y_range.max - y_range.min),
+    };
 }
 
 /// Get the height of the positive and negative section
@@ -328,12 +305,26 @@ fn applyPaddingToRange(range: Range(f32), min: ValuePercent, max: ValuePercent) 
 }
 
 /// Get the information of the figure
-fn getInfo(self: *const Figure) FigureInfo {
+fn getInfo(self: *const Figure) !FigureInfo {
     const x_range =
-        if (self.style.axis.x_range) |x_range| x_range else applyPaddingToRange(self.getRangeX(), self.style.value_padding.x_min, self.style.value_padding.x_max);
+        self.style.axis.x_range orelse applyPaddingToRange(self.getRangeX(), self.style.value_padding.x_min, self.style.value_padding.x_max);
+
+    if (self.style.axis.x_scale == .log) {
+        if (std.math.sign(x_range.min) == -1 or std.math.sign(x_range.max) == -1) {
+            logger.err("Cannot draw a log scale with negative values! Consider changing the `x_range` or `x_scale`", .{});
+            return Error.NegativeLogScale;
+        }
+    }
 
     const y_range =
-        if (self.style.axis.y_range) |y_range| y_range else applyPaddingToRange(self.getRangeY(), self.style.value_padding.y_min, self.style.value_padding.y_max);
+        self.style.axis.y_range orelse applyPaddingToRange(self.getRangeY(), self.style.value_padding.y_min, self.style.value_padding.y_max);
+
+    if (self.style.axis.y_scale == .log) {
+        if (std.math.sign(y_range.min) == -1 or std.math.sign(y_range.max) == -1) {
+            logger.err("Cannot draw a log scale with negative values! Consider changing the `y_range` or `y_scale`", .{});
+            return Error.NegativeLogScale;
+        }
+    }
 
     const width = self.computePlotWidth(x_range);
     const height = self.computePlotHeight(y_range);
@@ -799,14 +790,23 @@ fn drawTitle(self: *Figure, svg: *SVG, info: FigureInfo) !void {
 
 /// Draw the figure on an SVG File.
 pub fn show(self: *Figure) !SVG {
-    if (self.plots.items.len == 0) return error.NoPlots;
+    if (self.plots.items.len == 0) {
+        logger.err("Cannot draw a figure without any plots!", .{});
+        return Error.NoPlots;
+    }
 
-    const info = self.getInfo();
+    const info = try self.getInfo();
 
-    var svg = SVG.init(self.allocator, info.width + 2 * self.style.plot_padding, info.height + 2 * self.style.plot_padding);
+    var svg = SVG.init(
+        self.allocator,
+        info.width + 2 * self.style.plot_padding,
+        info.height + 2 * self.style.plot_padding,
+    );
 
+    // Set the top left of the plot to be (0; 0)
     svg.viewbox.x = -self.style.plot_padding;
     svg.viewbox.y = -self.style.plot_padding;
+
     // Draw the background
     try svg.addRect(.{
         .x = .{ .pixel = svg.viewbox.x },
@@ -846,4 +846,29 @@ pub fn show(self: *Figure) !SVG {
     if (self.style.legend.show) try self.drawLegend(&svg, info);
 
     return svg;
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//                                                  Tests for "show"                                                  //
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+test "show - No Plots" {
+    var figure = Figure.init(std.testing.allocator, .{});
+    defer figure.deinit();
+    try std.testing.expectError(Error.NoPlots, figure.show());
+}
+
+test "show - Negative Log" {
+    var figure = Figure.init(std.testing.allocator, .{
+        .axis = .{
+            .y_scale = .log,
+            .y_range = .{ .min = -1.0, .max = 1.0 },
+        },
+    });
+    defer figure.deinit();
+    const plot = @import("Line.zig"){
+        .y = &[0]f32{},
+    };
+    try figure.addPlot(plot);
+    try std.testing.expectError(Error.NegativeLogScale, figure.show());
 }

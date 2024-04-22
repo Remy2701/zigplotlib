@@ -80,8 +80,3 @@ pub fn main() !void {
 
     try svg.writeTo(file.writer());
 }
-
-test "all" {
-    const FigureInfo = @import("plot/FigureInfo.zig");
-    std.testing.refAllDecls(FigureInfo);
-}

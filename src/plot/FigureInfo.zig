@@ -83,6 +83,8 @@ test "compute Δx - Positive Zero" {
         .height = 100.0,
         .x_range = Range(f32).init(0.0, 10.0),
         .y_range = Range(f32).init(0.0, 0.0),
+        .x_scale = .linear,
+        .y_scale = .linear,
     };
 
     const dx = info.getDx();
@@ -96,6 +98,8 @@ test "compute Δx - Positive" {
         .height = 100.0,
         .x_range = Range(f32).init(5.0, 10.0),
         .y_range = Range(f32).init(0.0, 0.0),
+        .x_scale = .linear,
+        .y_scale = .linear,
     };
 
     const dx = info.getDx();
@@ -109,6 +113,8 @@ test "compute Δx - Negative Zero" {
         .height = 100.0,
         .x_range = Range(f32).init(-10.0, 0.0),
         .y_range = Range(f32).init(0.0, 0.0),
+        .x_scale = .linear,
+        .y_scale = .linear,
     };
 
     const dx = info.getDx();
@@ -122,6 +128,8 @@ test "compute Δx - Negative" {
         .height = 100.0,
         .x_range = Range(f32).init(-10.0, -5.0),
         .y_range = Range(f32).init(0.0, 0.0),
+        .x_scale = .linear,
+        .y_scale = .linear,
     };
 
     const dx = info.getDx();
@@ -135,6 +143,8 @@ test "compute Δx - Positive & Negative" {
         .height = 100.0,
         .x_range = Range(f32).init(-10.0, 10.0),
         .y_range = Range(f32).init(0.0, 0.0),
+        .x_scale = .linear,
+        .y_scale = .linear,
     };
 
     const dx = info.getDx();
@@ -152,6 +162,8 @@ test "compute Δy - Positive Zero" {
         .height = 100.0,
         .x_range = Range(f32).init(0.0, 0.0),
         .y_range = Range(f32).init(0.0, 10.0),
+        .x_scale = .linear,
+        .y_scale = .linear,
     };
 
     const dy = info.getDy();
@@ -165,6 +177,8 @@ test "compute Δy - Positive" {
         .height = 100.0,
         .x_range = Range(f32).init(0.0, 0.0),
         .y_range = Range(f32).init(5.0, 10.0),
+        .x_scale = .linear,
+        .y_scale = .linear,
     };
 
     const dy = info.getDy();
@@ -178,6 +192,8 @@ test "compute Δy - Negative Zero" {
         .height = 100.0,
         .x_range = Range(f32).init(0.0, 0.0),
         .y_range = Range(f32).init(-10.0, 0.0),
+        .x_scale = .linear,
+        .y_scale = .linear,
     };
 
     const dy = info.getDy();
@@ -191,6 +207,8 @@ test "compute Δy - Negative" {
         .height = 100.0,
         .x_range = Range(f32).init(0.0, 0.0),
         .y_range = Range(f32).init(-10.0, -5.0),
+        .x_scale = .linear,
+        .y_scale = .linear,
     };
 
     const dy = info.getDy();
@@ -204,6 +222,8 @@ test "compute Δy - Positive & Negative" {
         .height = 100.0,
         .x_range = Range(f32).init(0.0, 0.0),
         .y_range = Range(f32).init(-10.0, 10.0),
+        .x_scale = .linear,
+        .y_scale = .linear,
     };
 
     const dy = info.getDy();
@@ -221,6 +241,8 @@ test "compute x - Positive Zero" {
         .height = 100.0,
         .x_range = Range(f32).init(0.0, 10.0),
         .y_range = Range(f32).init(0.0, 0.0),
+        .x_scale = .linear,
+        .y_scale = .linear,
     };
 
     // start of the range
@@ -242,6 +264,8 @@ test "compute x - Positive" {
         .height = 100.0,
         .x_range = Range(f32).init(5.0, 10.0),
         .y_range = Range(f32).init(0.0, 0.0),
+        .x_scale = .linear,
+        .y_scale = .linear,
     };
 
     // start of the range
@@ -263,6 +287,8 @@ test "compute x - Negative Zero" {
         .height = 100.0,
         .x_range = Range(f32).init(-10.0, 0.0),
         .y_range = Range(f32).init(0.0, 0.0),
+        .x_scale = .linear,
+        .y_scale = .linear,
     };
 
     // start of the range
@@ -284,6 +310,8 @@ test "compute x - Negative" {
         .height = 100.0,
         .x_range = Range(f32).init(-10.0, -5.0),
         .y_range = Range(f32).init(0.0, 0.0),
+        .x_scale = .linear,
+        .y_scale = .linear,
     };
 
     // start of the range
@@ -305,6 +333,8 @@ test "compute x - Positive & Negative" {
         .height = 100.0,
         .x_range = Range(f32).init(-10.0, 10.0),
         .y_range = Range(f32).init(0.0, 0.0),
+        .x_scale = .linear,
+        .y_scale = .linear,
     };
 
     // start of the range
@@ -330,6 +360,8 @@ test "compute y - Positive Zero" {
         .height = 100.0,
         .x_range = Range(f32).init(0.0, 0.0),
         .y_range = Range(f32).init(0.0, 10.0),
+        .x_scale = .linear,
+        .y_scale = .linear,
     };
 
     // start of the range
@@ -351,6 +383,8 @@ test "compute y - Positive" {
         .height = 100.0,
         .x_range = Range(f32).init(0.0, 0.0),
         .y_range = Range(f32).init(5.0, 10.0),
+        .x_scale = .linear,
+        .y_scale = .linear,
     };
 
     // start of the range
@@ -372,6 +406,8 @@ test "compute y - Negative Zero" {
         .height = 100.0,
         .x_range = Range(f32).init(0.0, 0.0),
         .y_range = Range(f32).init(-10.0, 0.0),
+        .x_scale = .linear,
+        .y_scale = .linear,
     };
 
     // start of the range
@@ -393,6 +429,8 @@ test "compute y - Negative" {
         .height = 100.0,
         .x_range = Range(f32).init(0.0, 0.0),
         .y_range = Range(f32).init(-10.0, -5.0),
+        .x_scale = .linear,
+        .y_scale = .linear,
     };
 
     // start of the range
@@ -414,6 +452,8 @@ test "compute y - Positive & Negative" {
         .height = 100.0,
         .x_range = Range(f32).init(0.0, 0.0),
         .y_range = Range(f32).init(-10.0, 10.0),
+        .x_scale = .linear,
+        .y_scale = .linear,
     };
 
     // start of the range

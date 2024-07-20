@@ -91,6 +91,7 @@ pub fn build(b: *std.Build) void {
     const line_step = addStartPoint(b, target, optimize, "line-example", "Run the Line example", "example/line.zig", lib_module);
     const area_step = addStartPoint(b, target, optimize, "area-example", "Run the Area example", "example/area.zig", lib_module);
     const log_step = addStartPoint(b, target, optimize, "log-example", "Run the Logarithmic example", "example/logarithmic.zig", lib_module);
+    const candlestick_step = addStartPoint(b, target, optimize, "candlestick-example", "Run the Candle stick example", "example/candle_stick.zig", lib_module);
 
     const all_step = b.step("all", "Run all the examples");
     all_step.dependOn(run_step);
@@ -100,6 +101,7 @@ pub fn build(b: *std.Build) void {
     all_step.dependOn(line_step);
     all_step.dependOn(area_step);
     all_step.dependOn(log_step);
+    all_step.dependOn(candlestick_step);
 
     // Creates a step for unit testing. This only builds the test executable
     // but does not run it.

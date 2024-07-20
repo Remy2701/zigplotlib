@@ -20,6 +20,8 @@ const FigureInfo = @import("FigureInfo.zig");
 
 const intf = @import("../core/intf.zig");
 
+pub const formatters = @import("formatters.zig");
+
 const Figure = @This();
 
 const GhostLogger = @import("../util/log.zig").GhostLogger;
@@ -99,6 +101,14 @@ pub const Style = struct {
         show_x_axis: bool = true,
         /// Whether to show the y-axis
         show_y_axis: bool = true,
+        /// Whether to show the labels on the x-axis
+        show_x_labels: bool = true,
+        /// Whether to show the labels on the y-axis
+        show_y_labels: bool = true,
+        /// The formatter for the data on the x-axis
+        x_labels_formatter: ?*const fn (*std.ArrayList(u8), f32) anyerror!void = null,
+        /// The formatter for the data on the y-axis
+        y_labels_formatter: ?*const fn (*std.ArrayList(u8), f32) anyerror!void = null,
         /// Whether to show the grid on the x-axis
         show_grid_x: bool = true,
         /// Whether to show the grid on the y-axis
@@ -534,7 +544,12 @@ fn drawYLabelsLinear(self: *Figure, svg: *SVG, info: FigureInfo) !void {
         const y_value = info.computeYInv(y);
 
         var buffer = std.ArrayList(u8).init(self.arena.allocator());
-        try buffer.writer().print("{d:.2}", .{y_value});
+
+        if (self.style.axis.y_labels_formatter) |formatter| {
+            try formatter(&buffer, y_value);
+        } else {
+            try buffer.writer().print("{d:.2}", .{y_value});
+        }
 
         try svg.addText(.{
             .x = .{ .pixel = -self.style.axis.label_padding },
@@ -555,7 +570,11 @@ fn drawYLabelsLinear(self: *Figure, svg: *SVG, info: FigureInfo) !void {
         const y_value = info.computeYInv(y);
 
         var buffer = std.ArrayList(u8).init(self.arena.allocator());
-        try buffer.writer().print("{d:.2}", .{y_value});
+        if (self.style.axis.y_labels_formatter) |formatter| {
+            try formatter(&buffer, y_value);
+        } else {
+            try buffer.writer().print("{d:.2}", .{y_value});
+        }
 
         try svg.addText(.{
             .x = .{ .pixel = -self.style.axis.label_padding },
@@ -587,7 +606,11 @@ fn drawYLabelsLog(self: *Figure, svg: *SVG, info: FigureInfo) !void {
         const y_value = std.math.pow(f32, 10, i);
 
         var buffer = std.ArrayList(u8).init(self.arena.allocator());
-        try buffer.writer().print("{d:.2}", .{y_value});
+        if (self.style.axis.y_labels_formatter) |formatter| {
+            try formatter(&buffer, y_value);
+        } else {
+            try buffer.writer().print("{d:.2}", .{y_value});
+        }
 
         try svg.addText(.{
             .x = .{ .pixel = -self.style.axis.label_padding },
@@ -624,7 +647,11 @@ fn drawXLabelsLinear(self: *Figure, svg: *SVG, info: FigureInfo) !void {
         const x_value = info.computeXInv(x);
 
         var buffer = std.ArrayList(u8).init(self.arena.allocator());
-        try buffer.writer().print("{d:.2}", .{x_value});
+        if (self.style.axis.x_labels_formatter) |formatter| {
+            try formatter(&buffer, x_value);
+        } else {
+            try buffer.writer().print("{d:.2}", .{x_value});
+        }
 
         try svg.addText(.{
             .x = .{ .pixel = x },
@@ -645,7 +672,11 @@ fn drawXLabelsLinear(self: *Figure, svg: *SVG, info: FigureInfo) !void {
         const x_value = info.computeXInv(x);
 
         var buffer = std.ArrayList(u8).init(self.arena.allocator());
-        try buffer.writer().print("{d:.2}", .{x_value});
+        if (self.style.axis.x_labels_formatter) |formatter| {
+            try formatter(&buffer, x_value);
+        } else {
+            try buffer.writer().print("{d:.2}", .{x_value});
+        }
 
         try svg.addText(.{
             .x = .{ .pixel = x },
@@ -677,7 +708,11 @@ fn drawXLabelsLog(self: *Figure, svg: *SVG, info: FigureInfo) !void {
         const x_value = std.math.pow(f32, 10, i);
 
         var buffer = std.ArrayList(u8).init(self.arena.allocator());
-        try buffer.writer().print("{d:.2}", .{x_value});
+        if (self.style.axis.x_labels_formatter) |formatter| {
+            try formatter(&buffer, x_value);
+        } else {
+            try buffer.writer().print("{d:.2}", .{x_value});
+        }
 
         try svg.addText(.{
             .x = .{ .pixel = x },
@@ -839,8 +874,8 @@ pub fn show(self: *Figure) !SVG {
     try self.drawBorder(&svg, info);
 
     // Labels
-    try self.drawXLabels(&svg, info);
-    try self.drawYLabels(&svg, info);
+    if (self.style.axis.show_x_labels) try self.drawXLabels(&svg, info);
+    if (self.style.axis.show_y_labels) try self.drawYLabels(&svg, info);
 
     // Legend
     if (self.style.legend.show) try self.drawLegend(&svg, info);

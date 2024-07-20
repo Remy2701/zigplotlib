@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width="612" height="612" viewBox="-50 -50 612 612" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<rect x="-50" y="-50" width="612" height="612" rx="auto" ry="auto" fill="#FFFFFF" fill-opacity="1e0" stroke="none" stroke-opacity="1e0" stroke-width="1" opacity="1e0" />
+<text x="256" y="-8" dx="0" dy="0" textLength="none" fill="#000000" fill-opacity="1" stroke="none" stroke-opacity="1" stroke-width="1" opacity="1" font-family="sans-serif" font-size="20px" font-weight="bold" text-anchor="middle" dominant-baseline="text-after-edge" >CandleStick example</text>
+<line x1="25.599998" y1="376.12308" x2="25.599998" y2="494.27692" stroke="#00FF00" stroke-opacity="1" stroke-width="2" stroke-linecap="round" opacity="1" />
+<rect x="5.12" y="435.19998" width="40.96" height="39.384644" rx="auto" ry="auto" fill="#00FF00" fill-opacity="1e0" stroke="none" stroke-opacity="1e0" stroke-width="1" opacity="1e0" />
+<line x1="76.799995" y1="395.81537" x2="76.799995" y2="454.8923" stroke="#00FF00" stroke-opacity="1" stroke-width="2" stroke-linecap="round" opacity="1" />
+<rect x="56.319996" y="415.5077" width="40.96" height="19.692291" rx="auto" ry="auto" fill="#00FF00" fill-opacity="1e0" stroke="none" stroke-opacity="1e0" stroke-width="1" opacity="1e0" />
+<line x1="127.99999" y1="395.81537" x2="127.99999" y2="474.58463" stroke="#FF0000" stroke-opacity="1" stroke-width="2" stroke-linecap="round" opacity="1" />
+<rect x="107.52" y="415.5077" width="40.96" height="39.384613" rx="auto" ry="auto" fill="#FF0000" fill-opacity="1e0" stroke="none" stroke-opacity="1e0" stroke-width="1" opacity="1e0" />
+<line x1="179.19998" y1="376.12308" x2="179.19998" y2="474.58463" stroke="#00FF00" stroke-opacity="1" stroke-width="2" stroke-linecap="round" opacity="1" />
+<rect x="158.71999" y="395.81537" width="40.96" height="59.076935" rx="auto" ry="auto" fill="#00FF00" fill-opacity="1e0" stroke="none" stroke-opacity="1e0" stroke-width="1" opacity="1e0" />
+<line x1="230.4" y1="61.046143" x2="230.4" y2="415.5077" stroke="#00FF00" stroke-opacity="1" stroke-width="2" stroke-linecap="round" opacity="1" />
+<rect x="209.91998" y="198.89227" width="40.960014" height="196.9231" rx="auto" ry="auto" fill="#00FF00" fill-opacity="1e0" stroke="none" stroke-opacity="1e0" stroke-width="1" opacity="1e0" />
+<line x1="281.59998" y1="139.81537" x2="281.59998" y2="218.5846" stroke="#00FF00" stroke-opacity="1" stroke-width="2" stroke-linecap="round" opacity="1" />
+<rect x="261.12" y="159.50769" width="40.959984" height="39.384583" rx="auto" ry="auto" fill="#00FF00" fill-opacity="1e0" stroke="none" stroke-opacity="1e0" stroke-width="1" opacity="1e0" />
+<line x1="332.8" y1="139.81537" x2="332.8" y2="317.04614" stroke="#FF0000" stroke-opacity="1" stroke-width="2" stroke-linecap="round" opacity="1" />
+<rect x="312.31998" y="159.50769" width="40.960014" height="78.769196" rx="auto" ry="auto" fill="#FF0000" fill-opacity="1e0" stroke="none" stroke-opacity="1e0" stroke-width="1" opacity="1e0" />
+<line x1="384" y1="218.5846" x2="384" y2="376.12308" stroke="#6688FF" stroke-opacity="1" stroke-width="2" stroke-linecap="round" opacity="1" />
+<rect x="363.52" y="238.27689" width="40.959984" height="118.15387" rx="auto" ry="auto" fill="#6688FF" fill-opacity="1e0" stroke="none" stroke-opacity="1e0" stroke-width="1" opacity="1e0" />
+<line x1="435.19998" y1="297.35388" x2="435.19998" y2="376.12308" stroke="#00FF00" stroke-opacity="1" stroke-width="2" stroke-linecap="round" opacity="1" />
+<rect x="414.71997" y="317.04614" width="40.960014" height="39.384613" rx="auto" ry="auto" fill="#00FF00" fill-opacity="1e0" stroke="none" stroke-opacity="1e0" stroke-width="1" opacity="1e0" />
+<line x1="486.4" y1="277.66153" x2="486.4" y2="336.73846" stroke="#00FF00" stroke-opacity="1" stroke-width="2" stroke-linecap="round" opacity="1" />
+<rect x="465.91998" y="297.35388" width="40.960014" height="19.69226" rx="auto" ry="auto" fill="#00FF00" fill-opacity="1e0" stroke="none" stroke-opacity="1e0" stroke-width="1" opacity="1e0" />
+<line x1="0" y1="0" x2="0" y2="512" stroke="#000000" stroke-opacity="1" stroke-width="2" stroke-linecap="butt" opacity="1" />
+<rect x="0" y="0" width="512" height="512" rx="auto" ry="auto" fill="none" fill-opacity="1e0" stroke="#000000" stroke-opacity="1e0" stroke-width="4" opacity="1e0" />
+<text x="-10" y="512" dx="0" dy="0" textLength="none" fill="#000000" fill-opacity="1" stroke="none" stroke-opacity="1" stroke-width="1" opacity="1" font-family="sans-serif" font-size="10px" font-weight="normal" text-anchor="end" dominant-baseline="middle" >0.81</text>
+<text x="-10" y="426.66666" dx="0" dy="0" textLength="none" fill="#000000" fill-opacity="1" stroke="none" stroke-opacity="1" stroke-width="1" opacity="1" font-family="sans-serif" font-size="10px" font-weight="normal" text-anchor="end" dominant-baseline="middle" >1.24</text>
+<text x="-10" y="341.3333" dx="0" dy="0" textLength="none" fill="#000000" fill-opacity="1" stroke="none" stroke-opacity="1" stroke-width="1" opacity="1" font-family="sans-serif" font-size="10px" font-weight="normal" text-anchor="end" dominant-baseline="middle" >1.68</text>
+<text x="-10" y="256" dx="0" dy="0" textLength="none" fill="#000000" fill-opacity="1" stroke="none" stroke-opacity="1" stroke-width="1" opacity="1" font-family="sans-serif" font-size="10px" font-weight="normal" text-anchor="end" dominant-baseline="middle" >2.11</text>
+<text x="-10" y="170.66666" dx="0" dy="0" textLength="none" fill="#000000" fill-opacity="1" stroke="none" stroke-opacity="1" stroke-width="1" opacity="1" font-family="sans-serif" font-size="10px" font-weight="normal" text-anchor="end" dominant-baseline="middle" >2.54</text>
+<text x="-10" y="85.33331" dx="0" dy="0" textLength="none" fill="#000000" fill-opacity="1" stroke="none" stroke-opacity="1" stroke-width="1" opacity="1" font-family="sans-serif" font-size="10px" font-weight="normal" text-anchor="end" dominant-baseline="middle" >2.98</text>
+</svg>

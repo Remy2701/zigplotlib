@@ -3,7 +3,7 @@ The Zig Plot Lib is a library for plotting data in Zig. It is designed to be eas
 
 **Note:** This library is still in development and is not yet ready for production use.
 
-I'm developping this library with version 0.12.0.
+I'm developping this library with version 0.13.0.
 
 ## Installation
 You can install the library by adding it to the `build.zig.zon` file, either manually like so:
@@ -353,6 +353,33 @@ The options for styling the stem plot are:
 | `shape` | `Shape` | The shape of the points (at the end of the stem) |
 | `radius` | `f32` | The radius of the points (at the end of the stem) |
 
+### Candlestick
+
+![Candlestick](example/out/candlestick.svg)
+
+The options for styling the candlestick plot are:
+
+| Option | Type | Description |
+| --- | --- | --- |
+| `title` | `?[]const u8` | The title of the plot (used for the legend) |
+| `inc_color` | `RGB (u48)` | The color of the increasing candlestick |
+| `dec_color` | `RGB (u48)` | The color of the decreasing candlestick |
+| `width` | `f32` | The width of the candle |
+| `gap` | `f32` | The gap between the candles |
+| `line_thickness` | `f32` | The thickness of the sticks |
+
+The CandleStick plot works a bit differently, it doesn't take a `[]f32` but a `[]Candle`, named `candles` (there is no value for the x-axis).
+
+The parameters for the candle are as follows:
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `open` | `f32` | The opening price of the candle |
+| `close` | `f32` | The closing price of the candle |
+| `high` | `f32` | The highest price of the candle |
+| `low` | `f32` | The lowest price of the candle |
+| `color` | `?RGB (u48)` | The color of the candle (overrides the default one) |
+
 ## Create a new plot type
 In order to create a new type of plot, all that is needed is to create a struct that contains an `interface` function, defined as follows:
 
@@ -380,7 +407,7 @@ You can look at the implementation of the `Line`, `Scatter`, `Area`, `Step` or `
     - Histogram
 - Linear Interpolation with the figure border
 - Labels & Markers on Figure
-- Theme
+- Themes
 
 ### Known issue(s)
 - Imperfect text width calculation for the legend (only when the legend is positioned on the right)

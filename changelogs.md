@@ -1,3 +1,9 @@
+# Version 0.1.3
+- Added the CandleStick plot type (see [example](example/candle_stick.zig))
+- Added the `show_x_labels` and `show_y_labels` options to figure
+- Added the `x_labels_formatter` and `y_labels_formatter` options to figure 
+- Added the `default` and `scientific` formatters for the labels
+
 # Version 0.1.2
 - Added smooth option to line plot
 

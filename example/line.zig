@@ -8,6 +8,7 @@ const Range = zigplotlib.Range;
 
 const Figure = zigplotlib.Figure;
 const Line = zigplotlib.Line;
+const ShapeMarker = zigplotlib.ShapeMarker;
 
 const SMOOTHING = 0.2;
 
@@ -46,6 +47,24 @@ pub fn main() !void {
         .dash = 4.0,
         .smooth = SMOOTHING,
     } });
+
+    try figure.addMarker(ShapeMarker{
+        .x = 9.33,
+        .y = 0.73,
+        .shape = .cross,
+        .color = 0xFF0000,
+        .size = 6.0,
+    });
+    try figure.addMarker(ShapeMarker{
+        .x = 18.67,
+        .y = 0,
+        .shape = .circle_outline,
+        .color = 0x00FF00,
+        .size = 8.0,
+        .label = "Bottom",
+        .label_weight = .w600,
+    });
+
     var svg = try figure.show();
     defer svg.deinit();
 

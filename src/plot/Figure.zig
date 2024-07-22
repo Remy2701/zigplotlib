@@ -24,6 +24,8 @@ pub const formatters = @import("formatters.zig");
 
 const Figure = @This();
 
+const Marker = @import("Marker.zig");
+
 const GhostLogger = @import("../util/log.zig").GhostLogger;
 
 pub const logger = if (@import("builtin").is_test) GhostLogger else std.log.scoped(.Zigplotlib);
@@ -145,6 +147,8 @@ allocator: Allocator,
 arena: std.heap.ArenaAllocator,
 /// The list of plots
 plots: Plot.List,
+/// The list of plots
+markers: Marker.List,
 /// The style of the figure
 style: Style,
 
@@ -153,7 +157,8 @@ pub fn init(allocator: Allocator, style: Style) Figure {
     return Figure{
         .allocator = allocator,
         .arena = std.heap.ArenaAllocator.init(allocator),
-        .plots = std.ArrayList(Plot).init(allocator),
+        .plots = Plot.List.init(allocator),
+        .markers = Marker.List.init(allocator),
         .style = style,
     };
 }
@@ -162,6 +167,7 @@ pub fn init(allocator: Allocator, style: Style) Figure {
 pub fn deinit(self: *const Figure) void {
     self.arena.deinit();
     self.plots.deinit();
+    self.markers.deinit();
 }
 
 /// Add a plot to the figure, the given `plot` should be of type `Plot` or have the interface method that returns a
@@ -175,6 +181,20 @@ pub fn addPlot(self: *Figure, plot: anytype) !void {
         const mem = try self.arena.allocator().create(@TypeOf(plot));
         mem.* = plot;
         try self.plots.append(mem.interface());
+    }
+}
+
+/// Add a plot to the figure, the given `marker` should be of type `Plot` or have the interface method that returns a
+/// `Marker`.
+pub fn addMarker(self: *Figure, marker: anytype) !void {
+    if (@TypeOf(marker) == Marker) {
+        try self.markers.append(marker);
+    } else {
+        intf.ensureImplement(struct { interface: fn (*const anyopaque) Marker }, @TypeOf(marker));
+
+        const mem = try self.arena.allocator().create(@TypeOf(marker));
+        mem.* = marker;
+        try self.markers.append(mem.interface());
     }
 }
 
@@ -879,6 +899,11 @@ pub fn show(self: *Figure) !SVG {
 
     // Legend
     if (self.style.legend.show) try self.drawLegend(&svg, info);
+
+    // Markers
+    for (self.markers.items) |marker| {
+        try marker.draw(self.arena.allocator(), &svg, info);
+    }
 
     return svg;
 }

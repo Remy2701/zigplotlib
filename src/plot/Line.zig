@@ -175,5 +175,12 @@ fn draw(impl: *const anyopaque, allocator: Allocator, svg: *SVG, info: FigureInf
 
 /// Convert the Line Plot to a Plot (its interface)
 pub fn interface(self: *const Line) Plot {
-    return Plot.init(@as(*const anyopaque, self), self.style.title, self.style.color, &getXRange, &getYRange, &draw);
+    return Plot.init(
+        @as(*const anyopaque, self),
+        self.style.title,
+        self.style.color,
+        &getXRange,
+        &getYRange,
+        &draw,
+    );
 }

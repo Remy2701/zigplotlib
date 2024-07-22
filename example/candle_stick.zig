@@ -92,6 +92,7 @@ pub fn main() !void {
         .candles = &candles,
         .style = .{},
     });
+
     var svg = try figure.show();
     defer svg.deinit();
 

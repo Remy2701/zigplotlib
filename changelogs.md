@@ -1,3 +1,7 @@
+# Version 0.1.4
+- Added Markers to the figure
+- Added the ShapeMarker & TextMarker
+
 # Version 0.1.3
 - Added the CandleStick plot type (see [example](example/candle_stick.zig))
 - Added the `show_x_labels` and `show_y_labels` options to figure

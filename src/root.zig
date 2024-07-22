@@ -1,7 +1,10 @@
 const std = @import("std");
 
-// Plot Module
+// Figure (plot module)
 pub const Figure = @import("plot/Figure.zig");
+pub const FigureInfo = @import("plot/FigureInfo.zig");
+
+// Plots (plot module)
 pub const Plot = @import("plot/Plot.zig");
 pub const Line = @import("plot/Line.zig");
 pub const Area = @import("plot/Area.zig");
@@ -9,7 +12,11 @@ pub const Scatter = @import("plot/Scatter.zig");
 pub const Step = @import("plot/Step.zig");
 pub const Stem = @import("plot/Stem.zig");
 pub const CandleStick = @import("plot/CandleStick.zig");
-pub const FigureInfo = @import("plot/FigureInfo.zig");
+
+// Markers (plot module)
+pub const Marker = @import("plot/Marker.zig");
+pub const ShapeMarker = @import("plot/ShapeMarker.zig");
+pub const TextMarker = @import("plot/TextMarker.zig");
 
 // Util Module
 pub const Range = @import("util/range.zig").Range;

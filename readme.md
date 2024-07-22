@@ -268,7 +268,7 @@ figure.addPlot(Line {
 
 ## Supported Plots
 
-There are currently 5 types of plots supported:
+There are currently 6 types of plots supported:
 
 ### Line
 
@@ -380,6 +380,42 @@ The parameters for the candle are as follows:
 | `low` | `f32` | The lowest price of the candle |
 | `color` | `?RGB (u48)` | The color of the candle (overrides the default one) |
 
+## Supported Markers
+You can add a marker to the plot using the `addMarker` function.
+There are currently 2 types of markers supported:
+
+### ShapeMarker
+The shape marker allows you to write the plot with a shape.
+
+The options for the shape marker are:
+
+| Option | Type | Description |
+| --- | --- | --- |
+| `x` | `f32` | The x coordinate of the marker |
+| `y` | `f32` | The y coordinate of the marker |
+| `shape` | `Shape` | The shape of the marker |
+| `size` | `f32` | The size of the marker |
+| `color` | `RGB (u48)` | The color of the marker |
+| `label` | `?[]const u8` | The label of the marker |
+| `label_color` | `?RGB (u48)` | The color of the label (default to the same as the shape) |
+| `label_size` | `f32` | The size of the label |
+| `label_weight` | `FontWeight` | The weight of the label |
+
+
+### TextMarker
+The Text marker is similar to the shape marker, but there is no shape, only text.
+
+The options for the text marker are:
+
+| Option | Type | Description |
+| --- | --- | --- |
+| `x` | `f32` | The x coordinate of the marker |
+| `y` | `f32` | The y coordinate of the marker |
+| `size` | `f32` | The size of the text |
+| `color` | `RGB (u48)` | The color of the text |
+| `text` | `[]const u8` | The text of the marker |
+| `weight` | `FontWeight` | The weight of the text |
+
 ## Create a new plot type
 In order to create a new type of plot, all that is needed is to create a struct that contains an `interface` function, defined as follows:
 
@@ -397,7 +433,22 @@ The `Plot` object, contains the following fields:
 - a pointer to the get_range_y function `*const fn(*const anyopaque) Range(f32)`
 - a pointer to the draw function `*const fn(*const anyopaque, Allocator, *SVG, FigureInfo) anyerror!void`
 
-You can look at the implementation of the `Line`, `Scatter`, `Area`, `Step` or `Stem` plots for examples.
+You can look at the implementation of the `Line`, `Scatter`, `Area`, `Step`, `Stem`, or `CandleStick` plots for examples.
+
+## Create a new marker type
+Same as for the plots, to create a new type of marker, all that is needed is to create a struct that contains an `interface` function, defined as follows:
+
+```zig
+pub fn interface(self: *const Self) Marker {
+    ...
+}
+```
+
+The `Marker` object, contains the following fields:
+- a pointer to the data (`*const anyopaque`)
+- a pointer to the draw function `*const fn(*const anyopaque, Allocator, *SVG, FigureInfo) anyerror!void`
+
+You can look at the implementation of the `ShapeMarker` or `TextMarker` for examples.
 
 ## Roadmap
 - Ability to set the title of the axis
@@ -406,7 +457,6 @@ You can look at the implementation of the `Line`, `Scatter`, `Area`, `Step` or `
     - Bar
     - Histogram
 - Linear Interpolation with the figure border
-- Labels & Markers on Figure
 - Themes
 
 ### Known issue(s)

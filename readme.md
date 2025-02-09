@@ -1,4 +1,6 @@
 # Zig Plot Lib
+> This project is currently stalled as I don't have much time to work on it. Anybody can freely create a PR to add new features and I'll review it; or you can also fork it yourself and add whatever you would like.
+
 The Zig Plot Lib is a library for plotting data in Zig. It is designed to be easy to use and to have a simple API.
 
 **Note:** This library is still in development and is not yet ready for production use.
